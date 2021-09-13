@@ -1,2 +1,2 @@
-# R360---CMMS
+# R360 - CMMS
 RIce 360 - CMMS
