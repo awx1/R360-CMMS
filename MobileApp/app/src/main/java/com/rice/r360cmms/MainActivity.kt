@@ -5,6 +5,14 @@ import android.os.Bundle
 import android.view.View
 import okhttp3.*
 import java.io.IOException;
+import okhttp3.Response
+
+import okhttp3.FormBody
+
+import okhttp3.RequestBody
+
+
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -27,10 +35,13 @@ class MainActivity : AppCompatActivity() {
      */
     fun sendMessage(view: View) {
 
-        run("https://api.github.com/users/Evin1-/repos")
+        val formBody: RequestBody = FormBody.Builder()
+            .add("message", "Hello from App")
+            .build()
 
-        val request = Request.Builder()
-            .url("https://publicobject.com/helloworld.txt")
+        val request: Request = Request.Builder()
+            .url("http://10.0.2.2:3000/api/postTest")
+            .post(formBody)
             .build()
 
         client.newCall(request).enqueue(object : Callback {
@@ -41,10 +52,29 @@ class MainActivity : AppCompatActivity() {
                 response.use {
                     if (!response.isSuccessful) throw IOException("Unexpected code $response")
                     println(response.headers())
-                    println(response.body().toString())
+                    println("Body " + (response.body()?.string() ?: "Error: No Body"));
                 }
             }
         })
+
+//        run("https://api.github.com/users/Evin1-/repos")
+//
+//        val request = Request.Builder()
+//            .url("http://10.0.2.2:3000/api/helloworld")
+//            .build()
+//
+//        client.newCall(request).enqueue(object : Callback {
+//            override fun onFailure(call: Call, e: IOException) {
+//                e.printStackTrace()
+//            }
+//            override fun onResponse(call: Call, response: Response) {
+//                response.use {
+//                    if (!response.isSuccessful) throw IOException("Unexpected code $response")
+//                    println(response.headers())
+//                    println(response.body().toString())
+//                }
+//            }
+//        })
     }
 
     /**
