@@ -15,6 +15,7 @@ dependencies {
 
 
     implementation 'com.sparkjava:spark-core:2.2'
+    implementation 'org.json:json:20210307'
 }
 
 test {
