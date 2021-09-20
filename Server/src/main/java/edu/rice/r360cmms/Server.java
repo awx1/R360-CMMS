@@ -12,11 +12,11 @@ public class Server {
     public static void main(String[] args) {
         staticFileLocation("/WebPublic");
         get(
-                "/",
-                (request, response) -> {
-                    response.body(database.toString());
-                    //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
-                    return database.toString();
-                });
+            "/",
+            (request, response) -> {
+                //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
+                return database.toString();
+            });
+
     }
 }
