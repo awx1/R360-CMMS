@@ -15,6 +15,20 @@ public class Server {
         Spark.get(//Returns JSON object
             "/",
             (request, response) -> {
+                System.out.println(request.toString());
+                System.out.println(request.attributes().toString());
+                System.out.println(request.body().toString());
+                System.out.println(request.params().toString());
+                //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
+                return database.toString();
+            });
+        Spark.get(//Returns JSON object
+            "/DB/:category/:object/:field/",
+            (request, response) -> {
+                System.out.println(request.toString());
+                System.out.println(request.attributes().toString());
+                System.out.println(request.body().toString());
+                System.out.println(request.params().toString());
                 //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
                 return database.toString();
             });
