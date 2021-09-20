@@ -30,7 +30,37 @@ public class Server {
                 System.out.println(request.body().toString());
                 System.out.println(request.params().toString());
                 //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
+                return ((JSONObject)((JSONObject)database.get(request.params().get(":category"))).get(request.params().get(":object"))).get(request.params().get(":field")).toString();
+            });
+        Spark.get(//Returns JSON object
+            "/DB/",
+            (request, response) -> {
+                System.out.println(request.toString());
+                System.out.println(request.attributes().toString());
+                System.out.println(request.body().toString());
+                System.out.println(request.params().toString());
+                //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
                 return database.toString();
+            });
+        Spark.get(//Returns JSON object
+            "/DB/:category/",
+            (request, response) -> {
+                System.out.println(request.toString());
+                System.out.println(request.attributes().toString());
+                System.out.println(request.body().toString());
+                System.out.println(request.params().toString());
+                //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
+                return database.get(request.params().get(":category")).toString();
+            });
+        Spark.get(//Returns JSON object
+            "/DB/:category/:object/",
+            (request, response) -> {
+                System.out.println(request.toString());
+                System.out.println(request.attributes().toString());
+                System.out.println(request.body().toString());
+                System.out.println(request.params().toString());
+                //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
+                return ((JSONObject)database.get(request.params().get(":category"))).get(request.params().get(":object")).toString();
             });
         Spark.put( //Replaces item in JSON object
             "/",
