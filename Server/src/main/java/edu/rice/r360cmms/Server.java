@@ -3,7 +3,12 @@ package edu.rice.r360cmms;
 
 import static spark.Spark.staticFileLocation;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 import spark.Spark;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 
 public class Server {
     private static final String TAG = "CMMSServer";
@@ -11,6 +16,15 @@ public class Server {
 
 
     public static void main(String[] args) {
+        File initialFile = new File("DB.json");
+        InputStream is = new FileInputStream(initialFile);
+        if (is == null) {
+            System.out.println("Crash");
+            throw new NullPointerException("Cannot find resource file " + initialFile.toString());
+        }
+
+        JSONTokener tokener = new JSONTokener(is);
+        database = new JSONObject(tokener);
         staticFileLocation("/WebPublic");
         Spark.get(//Returns JSON object
             "/",
