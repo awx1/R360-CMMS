@@ -14,9 +14,9 @@ public class Server {
         get(
                 "/",
                 (request, response) -> {
-                    response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
-                    return "Next page!";
+                    response.body(database.toString());
+                    //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
+                    return database.toString();
                 });
-
     }
 }
