@@ -23,8 +23,13 @@ public class Server {
             is = new FileInputStream(initialFile);
         } catch (FileNotFoundException e) {
         }
-        JSONTokener tokener = new JSONTokener(is);
-        database = new JSONObject(tokener);
+        if (is != null) {
+            JSONTokener tokener = new JSONTokener(is);
+            database = new JSONObject(tokener);
+        }
+        else {
+            database = new JSONObject();
+        }
         staticFileLocation("/WebPublic");
         Spark.get(//Returns JSON object
                 "/",
