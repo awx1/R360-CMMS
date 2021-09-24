@@ -8,6 +8,7 @@ import spark.Spark;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 public class Server {
@@ -15,9 +16,12 @@ public class Server {
     private static JSONObject database = new JSONObject();
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
+        //System.out.println("Working Directory = " + System.getProperty("user.dir"));
         File initialFile = new File("DB.json");
+        //File initialFile = new File(System.getProperty("user.dir")+"\\DB.json");
         InputStream is = new FileInputStream(initialFile);
+        //InputStream is = null;
         if (is == null) {
             System.out.println("Crash");
             throw new NullPointerException("Cannot find resource file " + initialFile.toString());
