@@ -27,78 +27,78 @@ public class Server {
         database = new JSONObject(tokener);
         staticFileLocation("/WebPublic");
         Spark.get(//Returns JSON object
-            "/",
-            (request, response) -> {
-                System.out.println(request.toString());
-                System.out.println(request.attributes().toString());
-                System.out.println(request.body().toString());
-                System.out.println(request.params().toString());
-                //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
-                return database.toString();
-            });
+                "/",
+                (request, response) -> {
+                    System.out.println(request.toString());
+                    System.out.println(request.attributes().toString());
+                    System.out.println(request.body().toString());
+                    System.out.println(request.params().toString());
+                    //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
+                    return database.toString();
+                });
         Spark.get(//Returns JSON object
-            "/DB/:category/:object/:field/",
-            (request, response) -> {
-                System.out.println(request.toString());
-                System.out.println(request.attributes().toString());
-                System.out.println(request.body().toString());
-                System.out.println(request.params().toString());
-                //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
-                return ((JSONObject)((JSONObject)database.get(request.params().get(":category"))).get(request.params().get(":object"))).get(request.params().get(":field")).toString();
-            });
+                "/DB/:category/:object/:field/",
+                (request, response) -> {
+                    System.out.println(request.toString());
+                    System.out.println(request.attributes().toString());
+                    System.out.println(request.body().toString());
+                    System.out.println(request.params().toString());
+                    //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
+                    return ((JSONObject)((JSONObject)database.get(request.params().get(":category"))).get(request.params().get(":object"))).get(request.params().get(":field")).toString();
+                });
         Spark.get(//Returns JSON object
-            "/DB/",
-            (request, response) -> {
-                System.out.println(request.toString());
-                System.out.println(request.attributes().toString());
-                System.out.println(request.body().toString());
-                System.out.println(request.params().toString());
-                //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
-                return database.toString();
-            });
+                "/DB/",
+                (request, response) -> {
+                    System.out.println(request.toString());
+                    System.out.println(request.attributes().toString());
+                    System.out.println(request.body().toString());
+                    System.out.println(request.params().toString());
+                    //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
+                    return database.toString();
+                });
         Spark.get(//Returns JSON object
-            "/DB/:category/",
-            (request, response) -> {
-                System.out.println(request.toString());
-                System.out.println(request.attributes().toString());
-                System.out.println(request.body().toString());
-                System.out.println(request.params().toString());
-                //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
-                return database.get(request.params().get(":category")).toString();
-            });
+                "/DB/:category/",
+                (request, response) -> {
+                    System.out.println(request.toString());
+                    System.out.println(request.attributes().toString());
+                    System.out.println(request.body().toString());
+                    System.out.println(request.params().toString());
+                    //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
+                    return database.get(request.params().get(":category")).toString();
+                });
         Spark.get(//Returns JSON object
-            "/DB/:category/:object/",
-            (request, response) -> {
-                System.out.println(request.toString());
-                System.out.println(request.attributes().toString());
-                System.out.println(request.body().toString());
-                System.out.println(request.params().toString());
-                //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
-                return ((JSONObject)database.get(request.params().get(":category"))).get(request.params().get(":object")).toString();
-            });
+                "/DB/:category/:object/",
+                (request, response) -> {
+                    System.out.println(request.toString());
+                    System.out.println(request.attributes().toString());
+                    System.out.println(request.body().toString());
+                    System.out.println(request.params().toString());
+                    //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
+                    return ((JSONObject)database.get(request.params().get(":category"))).get(request.params().get(":object")).toString();
+                });
         Spark.put( //Replaces JSON object in a specific category
-            "/DB/:category/:object/:field/",
-            (request, response) -> {
-                System.out.println(request.toString());
-                System.out.println(request.attributes().toString());
-                System.out.println(request.body().toString());
-                System.out.println(request.params().toString());
-                //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
-                JSONObject newObject = new JSONObject(); // need to replace this with the object that gets passed in
-                return ((JSONObject)((JSONObject)database.get(request.params().get(":category"))).get(request.params().get(":object"))).put(request.params().get(":field"), newObject).toString();
-            });
+                "/DB/:category/:object/:field/",
+                (request, response) -> {
+                    System.out.println(request.toString());
+                    System.out.println(request.attributes().toString());
+                    System.out.println(request.body().toString());
+                    System.out.println(request.params().toString());
+                    //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
+                    JSONObject newObject = new JSONObject(); // need to replace this with the object that gets passed in
+                    return ((JSONObject)((JSONObject)database.get(request.params().get(":category"))).get(request.params().get(":object"))).put(request.params().get(":field"), newObject).toString();
+                });
         Spark.post( //Adds a new JSON object to a specific category
-            "/",
-            (request, response) -> {
-                //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
-                return database.toString();
-            });
+                "/",
+                (request, response) -> {
+                    //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
+                    return database.toString();
+                });
         Spark.delete( //Deletes item
-            "/",
-            (request, response) -> {
-                //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
-                return database.toString();
-            });
+                "/",
+                (request, response) -> {
+                    //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
+                    return database.toString();
+                });
 
     }
 }
