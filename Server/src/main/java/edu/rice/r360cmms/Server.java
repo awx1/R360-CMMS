@@ -124,4 +124,26 @@ public class Server {
         }
 
     }
+
+    private JSONObject getCategory(JSONObject DB, String category) {
+        return (JSONObject) getHandler(DB,category);
+    }
+
+    private JSONObject getObject(JSONObject DB, String category, String object) {
+        JSONObject cat =  getCategory(DB, category);
+        if (cat == null) {
+            return null;
+        } else {
+            return (JSONObject) getHandler(cat, object);
+        }
+    }
+
+    private String getField(JSONObject DB, String category, String object, String field) {
+        JSONObject fiel = getObject(DB, category, object);
+        if (fiel == null) {
+            return null;
+        } else {
+            return (String) getHandler(fiel, field);
+        }
+    }
 }
