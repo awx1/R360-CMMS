@@ -20,7 +20,8 @@ public class ShutdownHandler extends Thread {
     public void run() {
         System.out.println("=== my shutdown hook activated");
         try {
-            DBFile.write(Database.toString());
+            DBFile.write(Database.toString(5));
+            DBFile.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -34,7 +34,10 @@ public class Server {
             database = new JSONObject();
         }
         var shutdownListener = new ShutdownHandler(database, "DB2.json");
+        //shutdownListener.run();
         Runtime.getRuntime().addShutdownHook(shutdownListener);
+
+        System.out.println("Shutdown Handler Initialized");
         staticFileLocation("/WebPublic");
         Spark.get(//Returns JSON object
                 "/",
@@ -109,6 +112,16 @@ public class Server {
                     //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
                     return database.toString();
                 });
+
+    }
+
+    private Object getHandler(JSONObject DB, String Input) {
+        if (DB.has(Input)) {
+            Object out = DB.get(Input);
+            return out;
+        } else {
+            return null;
+        }
 
     }
 }
