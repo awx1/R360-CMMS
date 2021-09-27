@@ -101,20 +101,30 @@ public class Server {
                     return ((JSONObject)((JSONObject)database.get(request.params().get(":category"))).get(request.params().get(":object"))).put(request.params().get(":field"), newObject).toString();
                 });
         Spark.post( //Adds a new JSON object to a specific category
-                "/",
+                "/DB/:category/",
                 (request, response) -> {
                     //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
                     return database.toString();
                 });
-        Spark.delete( //Deletes item
-                "/",
+        Spark.delete( //Deletes JSON object in a specific category
+                "/DB/:category/:object/",
                 (request, response) -> {
                     //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
-                    return database.toString();
+                    System.out.println(request.toString());
+                    System.out.println(request.attributes().toString());
+                    System.out.println(request.body().toString());
+                    System.out.println(request.params().toString());
+                    return ((JSONObject) database.get(request.params().get(":category"))).remove(request.params(":object")).toString();
                 });
 
     }
 
+    /**
+     * Helper function used to check if a field exists and return it
+     * @param DB database object
+     * @param Input index of the requested object, e.g. "category1"
+     * @return the requested Object, or null if the object doesn't exist
+     */
     private Object getHandler(JSONObject DB, String Input) {
         if (DB.has(Input)) {
             Object out = DB.get(Input);
