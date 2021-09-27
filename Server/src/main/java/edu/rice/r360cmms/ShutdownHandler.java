@@ -3,16 +3,26 @@ package edu.rice.r360cmms;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class ShutdownHandler extends Thread {
     JSONObject Database;
-    File DBFile;
-    public ShutdownHandler(JSONObject Databasein, File DB_File) {
+    FileWriter DBFile;
+    public ShutdownHandler(JSONObject Databasein, String File) {
         Database = Databasein;
-        DBFile = DB_File;
+        try {
+            DBFile = new FileWriter(File);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     public void run() {
         System.out.println("=== my shutdown hook activated");
-
+        try {
+            DBFile.write(Database.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -17,12 +17,15 @@ public class Server {
 
 
     public static void main(String[] args) {
-        File initialFile = new File("DB.json");
+        String DB_File = "DB.json";
+        File initialFile = new File(DB_File);
         InputStream is = null;
         try {
             is = new FileInputStream(initialFile);
         } catch (FileNotFoundException e) {
         }
+
+
         if (is != null) {
             JSONTokener tokener = new JSONTokener(is);
             database = new JSONObject(tokener);
@@ -30,6 +33,8 @@ public class Server {
         else {
             database = new JSONObject();
         }
+        var shutdownListener = new ShutdownHandler(database, "DB2.json");
+        Runtime.getRuntime().addShutdownHook(shutdownListener);
         staticFileLocation("/WebPublic");
         Spark.get(//Returns JSON object
                 "/",
