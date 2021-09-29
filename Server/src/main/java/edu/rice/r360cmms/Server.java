@@ -47,7 +47,7 @@ public class Server {
                     System.out.println(request.body().toString());
                     System.out.println(request.params().toString());
                     //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
-                    return database.toString();
+                    return database.toString(5);
                 });
         Spark.get(//Returns JSON object
                 "/DB/:category/:object/:field/",
