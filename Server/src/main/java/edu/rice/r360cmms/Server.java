@@ -59,6 +59,7 @@ public class Server {
                     //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
                     return ((JSONObject)((JSONObject)database.get(request.params().get(":category"))).get(request.params().get(":object"))).get(request.params().get(":field")).toString();
                 });
+
         Spark.get(//Returns JSON object
                 "/DB/",
                 (request, response) -> {
@@ -106,6 +107,16 @@ public class Server {
                     //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
                     return database.toString();
                 });
+        Spark.delete( //Deletes an entire category
+                "/DB/:category/",
+                (request, response) -> {
+                    //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
+                    System.out.println(request.toString());
+                    System.out.println(request.attributes().toString());
+                    System.out.println(request.body().toString());
+                    System.out.println(request.params().toString());
+                    return database.remove(request.params().get(":category")).toString();
+                });
         Spark.delete( //Deletes JSON object in a specific category
                 "/DB/:category/:object/",
                 (request, response) -> {
@@ -115,6 +126,16 @@ public class Server {
                     System.out.println(request.body().toString());
                     System.out.println(request.params().toString());
                     return ((JSONObject) database.get(request.params().get(":category"))).remove(request.params(":object")).toString();
+                });
+        Spark.delete(//Delete a specific field
+                "/DB/:category/:object/:field/",
+                (request, response) -> {
+                    System.out.println(request.toString());
+                    System.out.println(request.attributes().toString());
+                    System.out.println(request.body().toString());
+                    System.out.println(request.params().toString());
+                    //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
+                    return ((JSONObject)((JSONObject)database.get(request.params().get(":category"))).get(request.params().get(":object"))).remove(request.params().get(":field")).toString();
                 });
 
     }
