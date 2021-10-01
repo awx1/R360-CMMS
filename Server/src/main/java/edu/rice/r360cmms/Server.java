@@ -4,6 +4,7 @@ package edu.rice.r360cmms;
 import static spark.Spark.staticFileLocation;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import spark.Request;
 import spark.Spark;
 
 import java.io.File;
@@ -57,7 +58,7 @@ public class Server {
                     System.out.println(request.body().toString());
                     System.out.println(request.params().toString());
                     //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
-                    return ((JSONObject)((JSONObject)database.get(request.params().get(":category"))).get(request.params().get(":object"))).get(request.params().get(":field")).toString();
+                    return getField(database,request);
                 });
 
         Spark.get(//Returns JSON object
@@ -78,7 +79,7 @@ public class Server {
                     System.out.println(request.body().toString());
                     System.out.println(request.params().toString());
                     //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
-                    return database.get(request.params().get(":category")).toString();
+                    return getCategory(database,request);
                 });
         Spark.get(//Returns JSON object
                 "/DB/:category/:object/",
@@ -88,7 +89,7 @@ public class Server {
                     System.out.println(request.body().toString());
                     System.out.println(request.params().toString());
                     //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
-                    return ((JSONObject)database.get(request.params().get(":category"))).get(request.params().get(":object")).toString();
+                    return getObject(database,request);
                 });
         Spark.put( //Replaces JSON object in a specific category
                 "/DB/:category/:object/:field/",
@@ -99,13 +100,14 @@ public class Server {
                     System.out.println(request.params().toString());
                     //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
                     JSONObject newObject = new JSONObject(); // need to replace this with the object that gets passed in
-                    return ((JSONObject)((JSONObject)database.get(request.params().get(":category"))).get(request.params().get(":object"))).put(request.params().get(":field"), newObject).toString();
+                    return getObject(database,request).put(request.params().get(":field"), newObject);
                 });
         Spark.post( //Adds a new JSON object to a specific category
                 "/DB/:category/",
                 (request, response) -> {
                     //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
-                    return database.toString();
+                    JSONObject newObject = new JSONObject(); // need to replace this with the object that gets passed in
+                    return database.put(request.params().get(":category"), newObject);
                 });
         Spark.delete( //Deletes an entire category
                 "/DB/:category/",
@@ -125,7 +127,7 @@ public class Server {
                     System.out.println(request.attributes().toString());
                     System.out.println(request.body().toString());
                     System.out.println(request.params().toString());
-                    return ((JSONObject) database.get(request.params().get(":category"))).remove(request.params(":object")).toString();
+                    return getCategory(database,request).remove(request.params(":object")).toString();
                 });
         Spark.delete(//Delete a specific field
                 "/DB/:category/:object/:field/",
@@ -135,7 +137,7 @@ public class Server {
                     System.out.println(request.body().toString());
                     System.out.println(request.params().toString());
                     //response.redirect("/week11images.html", 301); // you can find this file in /WebPublic
-                    return ((JSONObject)((JSONObject)database.get(request.params().get(":category"))).get(request.params().get(":object"))).remove(request.params().get(":field")).toString();
+                    return getObject(database,request).remove(request.params().get(":field")).toString();
                 });
 
     }
@@ -146,7 +148,7 @@ public class Server {
      * @param Input index of the requested object, e.g. "category1"
      * @return the requested Object, or null if the object doesn't exist
      */
-    private Object getHandler(JSONObject DB, String Input) {
+    private static Object getHandler(JSONObject DB, String Input) {
         if (DB.has(Input)) {
             Object out = DB.get(Input);
             return out;
@@ -156,11 +158,11 @@ public class Server {
 
     }
 
-    private JSONObject getCategory(JSONObject DB, String category) {
+    private static JSONObject getCategory(JSONObject DB, String category) {
         return (JSONObject) getHandler(DB,category);
     }
 
-    private JSONObject getObject(JSONObject DB, String category, String object) {
+    private static JSONObject getObject(JSONObject DB, String category, String object) {
         JSONObject cat =  getCategory(DB, category);
         if (cat == null) {
             return null;
@@ -169,12 +171,24 @@ public class Server {
         }
     }
 
-    private String getField(JSONObject DB, String category, String object, String field) {
+    private static String getField(JSONObject DB, String category, String object, String field) {
         JSONObject fiel = getObject(DB, category, object);
         if (fiel == null) {
             return null;
         } else {
             return (String) getHandler(fiel, field);
         }
+    }
+
+    private static String getField(JSONObject DB, Request request) {
+        return getField(DB, request.params().get(":category"),request.params().get(":object"),request.params().get(":field"));
+    }
+
+    private static JSONObject getObject(JSONObject DB, Request request) {
+        return getObject(DB, request.params().get(":category"),request.params().get(":object"));
+    }
+
+    private static JSONObject getCategory(JSONObject DB, Request request) {
+        return getCategory(DB, request.params().get(":category"));
     }
 }
