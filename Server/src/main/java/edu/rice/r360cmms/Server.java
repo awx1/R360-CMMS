@@ -13,7 +13,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 public class Server {
-    private static final String TAG = "CMMSServer";
     private static JSONObject database = new JSONObject();
 
 
@@ -23,13 +22,13 @@ public class Server {
         InputStream is = null;
         try {
             is = new FileInputStream(initialFile);
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException ignored) {
         }
 
 
         if (is != null) {
-            JSONTokener tokener = new JSONTokener(is);
-            database = new JSONObject(tokener);
+            JSONTokener tokenizer = new JSONTokener(is);
+            database = new JSONObject(tokenizer);
         }
         else {
             database = new JSONObject();
@@ -42,68 +41,52 @@ public class Server {
         staticFileLocation("/WebPublic");
         Spark.get(//Returns JSON object
                 "/",
-                (request, response) -> {
-                    return database.toString(5);
-                });
-        Spark.get(//Returns JSON object
-                "/DB/:category/:object/:field/",
-                (request, response) -> {
-                    return getField(database,request);
-                });
-
+                (request, response) -> database.toString(5));
         Spark.get(//Returns JSON object
                 "/DB/",
-                (request, response) -> {
-                    return database.toString();
-                });
+                (request, response) -> database.toString(5));
+        Spark.get(//Returns JSON object
+                "/DB/:category/",
+                (request, response) -> getCategory(database,request).toString(5));
+        Spark.get(//Returns JSON object
+                "/DB/:category/:object/",
+                (request, response) -> getObject(database,request).toString(5));
+        Spark.get(//Returns JSON object
+                "/DB/:category/:object/:field/",
+                (request, response) -> getField(database,request));
+
 
         Spark.get(//Returns JSON object
                 "/Save/",
                 (request, response) -> {
                     System.out.println(request.toString());
                     System.out.println(request.attributes().toString());
-                    System.out.println(request.body().toString());
+                    System.out.println(request.body());
                     System.out.println(request.params().toString());
-                    shutdownListener.run();
+                    shutdownListener.start();
                     return database.toString();
-                });
-        Spark.get(//Returns JSON object
-                "/DB/:category/",
-                (request, response) -> {
-                    return getCategory(database,request).toString(5);
-                });
-        Spark.get(//Returns JSON object
-                "/DB/:category/:object/",
-                (request, response) -> {
-                    return getObject(database,request).toString(5);
                 });
         Spark.put( //Replaces JSON object in a specific category
                 "/DB/:category/:object/:field/",
                 (request, response) -> {
-                    JSONObject newObject = new JSONObject(); // need to replace this with the object that gets passed in
+                    JSONObject newObject = new JSONObject(); // need to replace this with the object that gets past to the function.
                     return getObject(database,request).put(request.params().get(":field"), newObject);
                 });
         Spark.post( //Adds a new JSON object to a specific category
                 "/DB/:category/",
                 (request, response) -> {
-                    JSONObject newObject = new JSONObject(); // need to replace this with the object that gets passed in
+                    JSONObject newObject = new JSONObject(); // need to replace this with the object that gets past to the function.
                     return database.put(request.params().get(":category"), newObject);
                 });
         Spark.delete( //Deletes an entire category
                 "/DB/:category/",
-                (request, response) -> {
-                    return database.remove(request.params().get(":category")).toString();
-                });
+                (request, response) -> database.remove(request.params().get(":category")).toString());
         Spark.delete( //Deletes JSON object in a specific category
                 "/DB/:category/:object/",
-                (request, response) -> {
-                    return getCategory(database,request).remove(request.params(":object")).toString();
-                });
+                (request, response) -> getCategory(database,request).remove(request.params(":object")).toString());
         Spark.delete(//Delete a specific field
                 "/DB/:category/:object/:field/",
-                (request, response) -> {
-                    return getObject(database,request).remove(request.params().get(":field")).toString();
-                });
+                (request, response) -> getObject(database,request).remove(request.params().get(":field")).toString());
 
     }
 
@@ -115,8 +98,7 @@ public class Server {
      */
     private static Object getHandler(JSONObject DB, String Input) {
         if (DB.has(Input)) {
-            Object out = DB.get(Input);
-            return out;
+            return DB.get(Input);
         } else {
             return null;
         }
@@ -137,11 +119,11 @@ public class Server {
     }
 
     private static String getField(JSONObject DB, String category, String object, String field) {
-        JSONObject fiel = getObject(DB, category, object);
-        if (fiel == null) {
+        JSONObject OField = getObject(DB, category, object);
+        if (OField == null) {
             return null;
         } else {
-            return (String) getHandler(fiel, field);
+            return (String) getHandler(OField, field);
         }
     }
 
