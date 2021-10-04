@@ -55,7 +55,6 @@ public class Server {
                 "/DB/:category/:object/:field/",
                 (request, response) -> getField(database,request));
 
-
         Spark.get(//Returns JSON object
                 "/Save/",
                 (request, response) -> {
@@ -66,6 +65,7 @@ public class Server {
                     shutdownListener.start();
                     return database.toString();
                 });
+
         Spark.put( //Replaces JSON object in a specific category
                 "/DB/:category/:object/:field/",
                 (request, response) -> {
@@ -77,6 +77,18 @@ public class Server {
                 (request, response) -> {
                     JSONObject newObject = new JSONObject(); // need to replace this with the object that gets past to the function.
                     return database.put(request.params().get(":category"), newObject);
+                });
+        Spark.post( //Adds a new JSON object to a specific category
+                "/DB/:category/:object/",
+                (request, response) -> {
+                    JSONObject newObject = new JSONObject(); // need to replace this with the object that gets past to the function.
+                    return getCategory(database,request).put(request.params().get(":object"), newObject);
+                });
+        Spark.post( //Adds a new JSON object to a specific category
+                "/DB/:category/:object/:field/",
+                (request, response) -> {
+                    JSONObject newObject = new JSONObject(); // need to replace this with the object that gets past to the function.
+                    return getObject(database,request).put(request.params().get(":field"), newObject);
                 });
         Spark.delete( //Deletes an entire category
                 "/DB/:category/",
