@@ -130,16 +130,16 @@ public class Server {
         }
     }
 
-    private static String getField(JSONObject DB, String category, String object, String field) {
+    private static JSONObject getField(JSONObject DB, String category, String object, String field) {
         JSONObject OField = getObject(DB, category, object);
         if (OField == null) {
             return null;
         } else {
-            return (String) getHandler(OField, field);
+            return (JSONObject) getHandler(OField, field);
         }
     }
 
-    private static String getField(JSONObject DB, Request request) {
+    private static JSONObject getField(JSONObject DB, Request request) {
         return getField(DB, request.params().get(":category"),request.params().get(":object"),request.params().get(":field"));
     }
 
