@@ -38,7 +38,7 @@ public class Server {
         Runtime.getRuntime().addShutdownHook(shutdownListener);
 
         System.out.println("Shutdown Handler Initialized");
-        staticFileLocation("/WebPublic");
+        staticFileLocation("/Webpage");
         Spark.get(//Returns JSON object
                 "/",
                 (request, response) -> database.toString(5));
