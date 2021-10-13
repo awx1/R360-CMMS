@@ -25,7 +25,7 @@
             "Object": {"a": "b", "c": "d"},
             "String": "Hello World"
         }
-        editor.set(httpGet("../DB/"));
+        editor.set(JSON.parse(httpGet("../DB/")))
         function httpGet(theUrl)
         {
             var xmlHttp = new XMLHttpRequest();
