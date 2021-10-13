@@ -9,7 +9,7 @@
 </head>
 <body>
     <div id="jsoneditor" style="width: 400px; height: 400px;"></div>
-
+    <input id="clickMe" type="button" value="clickme" onclick="doFunction();" />
     <script>
         // create the editor
         const container = document.getElementById("jsoneditor")
@@ -25,10 +25,28 @@
             "Object": {"a": "b", "c": "d"},
             "String": "Hello World"
         }
-        editor.set(initialJson)
+        editor.set(httpGet("../DB/"));
+        function httpGet(theUrl)
+        {
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
+            xmlHttp.send( null );
+            return xmlHttp.responseText;
+        }
+        function httpPost(theUrl, data)
+        {
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open( "POST", theUrl, false ); // false for synchronous request
+            xmlHttp.send( data );
+            return xmlHttp.responseText;
+        }
 
         // get json
         const updatedJson = editor.get()
+        function doFunction() {
+            const updatedJson = editor.get();
+            httpPost("../DB/", updatedJson);
+        }
     </script>
 </body>
 </html>

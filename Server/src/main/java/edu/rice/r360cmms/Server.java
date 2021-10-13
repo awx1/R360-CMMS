@@ -73,6 +73,12 @@ public class Server {
                     return getObject(database,request).put(request.params().get(":field"), newObject);
                 });
         Spark.post( //Adds a new JSON object to a specific category
+                "/DB/",
+                (request, response) -> {
+                    JSONObject newObject = new JSONObject(); // need to replace this with the object that gets past to the function.
+                    return database = newObject;
+                });
+        Spark.post( //Adds a new JSON object to a specific category
                 "/DB/:category/",
                 (request, response) -> {
                     JSONObject newObject = new JSONObject(); // need to replace this with the object that gets past to the function.
