@@ -25,7 +25,7 @@ public class Server {
         } catch (FileNotFoundException ignored) {
         }
 
-
+        JSONObject[] databaseArray = new JSONObject[1];
         if (is != null) {
             JSONTokener tokenizer = new JSONTokener(is);
             database = new JSONObject(tokenizer);
@@ -33,7 +33,8 @@ public class Server {
         else {
             database = new JSONObject();
         }
-        var shutdownListener = new ShutdownHandler(database, "DB2.json");
+        databaseArray[0] = database;
+        var shutdownListener = new ShutdownHandler(databaseArray, "DB2.json");
         //shutdownListener.run();
         Runtime.getRuntime().addShutdownHook(shutdownListener);
 
@@ -75,8 +76,19 @@ public class Server {
         Spark.post( //Adds a new JSON object to a specific category
                 "/DB/",
                 (request, response) -> {
+                    System.out.println("Received new database");
+                    System.out.println(request.toString());
+                    System.out.println(request.contentLength());
+                    System.out.println(request.contentType());
+                    System.out.println(request.contextPath());
+                    System.out.println(request.attributes().toString());
+                    System.out.println(request.body());
+                    System.out.println(request.params().toString());
+                    System.out.println("---");
                     JSONObject newObject = new JSONObject(); // need to replace this with the object that gets past to the function.
-                    return database = newObject;
+                    database = newObject;
+                    databaseArray[0] = database;
+                    return database;
                 });
         Spark.post( //Adds a new JSON object to a specific category
                 "/DB/:category/",

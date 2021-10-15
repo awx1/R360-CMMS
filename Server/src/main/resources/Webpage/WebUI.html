@@ -45,7 +45,8 @@
         const updatedJson = editor.get()
         function doFunction() {
             const updatedJson = editor.get();
-            httpPost("../DB/", updatedJson);
+            const JSONstring = JSON.stringify(updatedJson)
+            httpPost("../DB/", JSONstring);
         }
     </script>
 </body>

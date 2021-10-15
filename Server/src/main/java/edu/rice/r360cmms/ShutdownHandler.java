@@ -7,9 +7,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class ShutdownHandler extends Thread {
-    JSONObject Database;
+    JSONObject[] Database;
     FileWriter DBFile;
-    public ShutdownHandler(JSONObject Databasein, String File) {
+    public ShutdownHandler(JSONObject[] Databasein, String File) {
         Database = Databasein;
         try {
             DBFile = new FileWriter(File);
@@ -20,7 +20,7 @@ public class ShutdownHandler extends Thread {
     public void run() {
         System.out.println("=== my shutdown hook activated");
         try {
-            DBFile.write(Database.toString(5));
+            DBFile.write(Database[0].toString(5));
             DBFile.close();
         } catch (IOException e) {
             e.printStackTrace();
