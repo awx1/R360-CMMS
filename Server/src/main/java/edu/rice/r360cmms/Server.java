@@ -76,16 +76,8 @@ public class Server {
         Spark.post( //Adds a new JSON object to a specific category
                 "/DB/",
                 (request, response) -> {
-                    System.out.println("Received new database");
-                    System.out.println(request.toString());
-                    System.out.println(request.contentLength());
-                    System.out.println(request.contentType());
-                    System.out.println(request.contextPath());
-                    System.out.println(request.attributes().toString());
-                    System.out.println(request.body());
-                    System.out.println(request.params().toString());
-                    System.out.println("---");
-                    JSONObject newObject = new JSONObject(); // need to replace this with the object that gets past to the function.
+                    JSONTokener tokenizer = new JSONTokener(request.body());
+                    JSONObject newObject = new JSONObject(tokenizer);
                     database = newObject;
                     databaseArray[0] = database;
                     return database;
@@ -93,19 +85,22 @@ public class Server {
         Spark.post( //Adds a new JSON object to a specific category
                 "/DB/:category/",
                 (request, response) -> {
-                    JSONObject newObject = new JSONObject(); // need to replace this with the object that gets past to the function.
+                    JSONTokener tokenizer = new JSONTokener(request.body());
+                    JSONObject newObject = new JSONObject(tokenizer);
                     return database.put(request.params().get(":category"), newObject);
                 });
         Spark.post( //Adds a new JSON object to a specific category
                 "/DB/:category/:object/",
                 (request, response) -> {
-                    JSONObject newObject = new JSONObject(); // need to replace this with the object that gets past to the function.
+                    JSONTokener tokenizer = new JSONTokener(request.body());
+                    JSONObject newObject = new JSONObject(tokenizer);
                     return getCategory(database,request).put(request.params().get(":object"), newObject);
                 });
         Spark.post( //Adds a new JSON object to a specific category
                 "/DB/:category/:object/:field/",
                 (request, response) -> {
-                    JSONObject newObject = new JSONObject(); // need to replace this with the object that gets past to the function.
+                    JSONTokener tokenizer = new JSONTokener(request.body());
+                    JSONObject newObject = new JSONObject(tokenizer);
                     return getObject(database,request).put(request.params().get(":field"), newObject);
                 });
         Spark.delete( //Deletes an entire category
