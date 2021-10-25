@@ -1,22 +1,71 @@
 {
-  "category1": {
-    "object1": {
-      "field1": "blue",
-      "field2": "green",
-      "field3": "red"
-
+  "Surgical ICU": {
+    "Surgical Masks": {
+      "inventoryNum": "1234",
+      "workOrderNum": "64",
+      "serviceProvider": "MedTech",
+      "serviceEngineeringCode": "504",
+      "faultCode": "300",
+      "ipmProcedure": "Lorem Ipsum sit dolar...",
+      "status": 0
     },
-    "object2": {
-      "field1": "1",
-      "field2": "2",
-      "field3": "3"
+    "Syringes": {
+      "inventoryNum": "1234",
+      "workOrderNum": "64",
+      "serviceProvider": "MedTech",
+      "serviceEngineeringCode": "504",
+      "faultCode": "300",
+      "ipmProcedure": "Lorem Ipsum sit dolar...",
+      "status": 1
+    },
+    "Blood Pressure Cuffs": {
+      "inventoryNum": "1234",
+      "workOrderNum": "64",
+      "serviceProvider": "MedTech",
+      "serviceEngineeringCode": "504",
+      "faultCode": "300",
+      "ipmProcedure": "Lorem Ipsum sit dolar...",
+      "status": 1
     }
   },
-  "category2": {
-    "object3": {
-      "field1": "windows",
-      "field2": "mac",
-      "field3": "linux"
+  "Neonatal Ward": {
+    "Incubators": {
+      "inventoryNum": "1234",
+      "workOrderNum": "64",
+      "serviceProvider": "MedTech",
+      "serviceEngineeringCode": "504",
+      "faultCode": "300",
+      "ipmProcedure": "Lorem Ipsum sit dolar...",
+      "status": 1
+    },
+    "Pulse Oximeters": {
+      "inventoryNum": "1234",
+      "workOrderNum": "64",
+      "serviceProvider": "MedTech",
+      "serviceEngineeringCode": "504",
+      "faultCode": "300",
+      "ipmProcedure": "Lorem Ipsum sit dolar...",
+      "status": 0
+    }
+  },
+  "Cardiology Ward": {
+    "EKG Machines": {
+      "inventoryNum": "1234",
+      "workOrderNum": "64",
+      "serviceProvider": "MedTech",
+      "serviceEngineeringCode": "504",
+      "faultCode": "300",
+      "ipmProcedure": "Lorem Ipsum sit dolar...",
+      "status": 2
+    },
+    "Defibrillators": {
+      "inventoryNum": "1234",
+      "workOrderNum": "64",
+      "serviceProvider": "MedTech",
+      "serviceEngineeringCode": "504",
+      "faultCode": "300",
+      "ipmProcedure": "Lorem Ipsum sit dolar...",
+      "status": 2
     }
   }
 }
