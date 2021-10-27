@@ -18,7 +18,8 @@ public class ShutdownHandler extends Thread {
         }
     }
     public void run() {
-        System.out.println("=== my shutdown hook activated");
+        System.out.println("Server Saved");
+        //System.out.println(Database[0]);
         try {
             DBFile.write(Database[0].toString(5));
             DBFile.close();

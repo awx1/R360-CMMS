@@ -2,6 +2,7 @@ package edu.rice.r360cmms;
 
 
 import static spark.Spark.staticFileLocation;
+
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import spark.Request;
@@ -11,6 +12,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.security.UnresolvedPermission;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Server {
     private static JSONObject database = new JSONObject();
@@ -34,12 +40,28 @@ public class Server {
             database = new JSONObject();
         }
         databaseArray[0] = database;
-        var shutdownListener = new ShutdownHandler(databaseArray, "DB2.json");
+        AtomicReference<ShutdownHandler> shutdownListener = new AtomicReference<>(new ShutdownHandler(databaseArray, "DB.json"));
+        AtomicReference<Boolean> Update = new AtomicReference<>(true);
         //shutdownListener.run();
-        Runtime.getRuntime().addShutdownHook(shutdownListener);
+        Runtime.getRuntime().addShutdownHook(shutdownListener.get());
+
+        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+        exec.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                if (Update.get()) {
+                    shutdownListener.get().Database = databaseArray;
+                    shutdownListener.get().start();
+                    shutdownListener.set(new ShutdownHandler(databaseArray, "DB.json"));
+                    Update.set(false);
+                }
+            }
+        }, 0, 5, TimeUnit.SECONDS);
 
         System.out.println("Shutdown Handler Initialized");
         staticFileLocation("/Webpage");
+
+
         Spark.get(//Returns JSON object
                 "/",
                 (request, response) -> database.toString(5));
@@ -63,7 +85,9 @@ public class Server {
                     System.out.println(request.attributes().toString());
                     System.out.println(request.body());
                     System.out.println(request.params().toString());
-                    shutdownListener.start();
+                    shutdownListener.get().Database = databaseArray;
+                    shutdownListener.get().start();
+                    shutdownListener.set(new ShutdownHandler(databaseArray, "DB2.json"));
                     return database.toString();
                 });
 
@@ -71,36 +95,45 @@ public class Server {
                 "/DB/:category/:object/:field/",
                 (request, response) -> {
                     JSONObject newObject = new JSONObject(); // need to replace this with the object that gets past to the function.
+                    Update.set(true);
                     return getObject(database,request).put(request.params().get(":field"), newObject);
                 });
         Spark.post( //Adds a new JSON object to a specific category
                 "/DB/",
                 (request, response) -> {
+                    System.out.println("Post:"+request.body());
                     JSONTokener tokenizer = new JSONTokener(request.body());
                     JSONObject newObject = new JSONObject(tokenizer);
                     database = newObject;
                     databaseArray[0] = database;
+                    Update.set(true);
                     return database;
                 });
         Spark.post( //Adds a new JSON object to a specific category
                 "/DB/:category/",
                 (request, response) -> {
+                    System.out.println("Post:"+request.body());
                     JSONTokener tokenizer = new JSONTokener(request.body());
                     JSONObject newObject = new JSONObject(tokenizer);
+                    Update.set(true);
                     return database.put(request.params().get(":category"), newObject);
                 });
         Spark.post( //Adds a new JSON object to a specific category
                 "/DB/:category/:object/",
                 (request, response) -> {
+                    System.out.println("Post:"+request.body());
                     JSONTokener tokenizer = new JSONTokener(request.body());
                     JSONObject newObject = new JSONObject(tokenizer);
+                    Update.set(true);
                     return getCategory(database,request).put(request.params().get(":object"), newObject);
                 });
         Spark.post( //Adds a new JSON object to a specific category
                 "/DB/:category/:object/:field/",
                 (request, response) -> {
+                    System.out.println("Post:"+request.body());
                     JSONTokener tokenizer = new JSONTokener(request.body());
                     JSONObject newObject = new JSONObject(tokenizer);
+                    Update.set(true);
                     return getObject(database,request).put(request.params().get(":field"), newObject);
                 });
         Spark.delete( //Deletes an entire category
@@ -124,6 +157,8 @@ public class Server {
     private static Object getHandler(JSONObject DB, String Input) {
         if (DB.has(Input)) {
             return DB.get(Input);
+        } else if (Input.contains("_")){
+            return DB.get(Input.replaceAll("_", " "));
         } else {
             return null;
         }
