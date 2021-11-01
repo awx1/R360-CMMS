@@ -50,23 +50,24 @@
      },
      "Neonatal Ward": {
           "Pulse Oximeters": {
-               "workOrderNum": "64",
-               "inventoryNum": "1234",
+               "workOrderNum": "63",
                "faultCode": "300",
+               "inventoryNum": "1234",
                "ipmProcedure": "Lorem Ipsum sit dolar...",
-               "serviceProvider": "MedTech Test",
+               "serviceProvider": "MedTech",
                "serviceEngineeringCode": "504",
-               "status": 0
+               "status": "0",
+               "timestamp": 0
           },
           "Incubators": {
-               "workOrderNum": "64",
+               "workOrderNum": "65",
                "faultCode": "300",
                "inventoryNum": "1234",
                "ipmProcedure": "Lorem Ipsum sit dolar...",
-               "serviceProvider": "MedTech5",
+               "serviceProvider": "MedTech2",
                "serviceEngineeringCode": "504",
                "status": "1",
-               "timestamp": 1635298281
+               "timestamp": 1635365454
           }
      }
 }

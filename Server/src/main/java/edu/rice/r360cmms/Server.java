@@ -8,10 +8,7 @@ import org.json.JSONTokener;
 import spark.Request;
 import spark.Spark;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
 import java.security.UnresolvedPermission;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -20,9 +17,18 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Server {
     private static JSONObject database = new JSONObject();
-
+    private static FileWriter logFileWriter;
 
     public static void main(String[] args) {
+
+        File logFile = new File("Log.txt");
+        try {
+            logFileWriter = new FileWriter(logFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
         String DB_File = "DB.json";
         File initialFile = new File(DB_File);
         InputStream is = null;
@@ -46,15 +52,12 @@ public class Server {
         Runtime.getRuntime().addShutdownHook(shutdownListener.get());
 
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-        exec.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                if (Update.get()) {
-                    shutdownListener.get().Database = databaseArray;
-                    shutdownListener.get().start();
-                    shutdownListener.set(new ShutdownHandler(databaseArray, "DB.json"));
-                    Update.set(false);
-                }
+        exec.scheduleAtFixedRate(() -> {
+            if (Update.get()) {
+                shutdownListener.get().Database = databaseArray;
+                shutdownListener.get().start();
+                shutdownListener.set(new ShutdownHandler(databaseArray, "DB.json"));
+                Update.set(false);
             }
         }, 0, 5, TimeUnit.SECONDS);
 
@@ -107,6 +110,7 @@ public class Server {
                     database = newObject;
                     databaseArray[0] = database;
                     Update.set(true);
+                    LogChange("Replace Database With:",newObject);
                     return database;
                 });
         Spark.post( //Adds a new JSON object to a specific category
@@ -116,6 +120,7 @@ public class Server {
                     JSONTokener tokenizer = new JSONTokener(request.body());
                     JSONObject newObject = new JSONObject(tokenizer);
                     Update.set(true);
+                    LogChange("Replace "+request.params().get(":category")+" With:",newObject);
                     return database.put(request.params().get(":category"), newObject);
                 });
         Spark.post( //Adds a new JSON object to a specific category
@@ -125,6 +130,7 @@ public class Server {
                     JSONTokener tokenizer = new JSONTokener(request.body());
                     JSONObject newObject = new JSONObject(tokenizer);
                     Update.set(true);
+                    LogChange("Replace "+request.params().get(":category")+"/"+request.params().get(":object")+" With:",newObject);
                     return getCategory(database,request).put(request.params().get(":object"), newObject);
                 });
         Spark.post( //Adds a new JSON object to a specific category
@@ -134,17 +140,28 @@ public class Server {
                     JSONTokener tokenizer = new JSONTokener(request.body());
                     JSONObject newObject = new JSONObject(tokenizer);
                     Update.set(true);
+                    LogChange("Replace "+request.params().get(":category")+"/"+request.params().get(":object")+"/"+request.params().get(":field")+" With:",newObject);
                     return getObject(database,request).put(request.params().get(":field"), newObject);
                 });
         Spark.delete( //Deletes an entire category
                 "/DB/:category/",
-                (request, response) -> database.remove(request.params().get(":category")).toString());
+                (request, response) -> {
+                    LogChange("Remove "+request.params().get(":category"),null);
+                    return database.remove(request.params().get(":category")).toString();
+                });
         Spark.delete( //Deletes JSON object in a specific category
                 "/DB/:category/:object/",
-                (request, response) -> getCategory(database,request).remove(request.params(":object")).toString());
+                (request, response) -> {
+                    LogChange("Remove "+request.params().get(":category")+"/"+request.params().get(":object"),null);
+                    return getCategory(database,request).remove(request.params(":object")).toString();
+
+                });
         Spark.delete(//Delete a specific field
                 "/DB/:category/:object/:field/",
-                (request, response) -> getObject(database,request).remove(request.params().get(":field")).toString());
+                (request, response) -> {
+                    LogChange("Remove "+request.params().get(":category")+"/"+request.params().get(":object")+"/"+request.params().get(":field"),null);
+                    return getObject(database,request).remove(request.params().get(":field")).toString();
+                });
 
     }
 
@@ -197,5 +214,17 @@ public class Server {
 
     private static JSONObject getCategory(JSONObject DB, Request request) {
         return getCategory(DB, request.params().get(":category"));
+    }
+
+    private static void LogChange(String text, JSONObject Data) {
+        String out = text;
+        if (Data != null) {
+            out += Data.toString();
+        }
+        try {
+            logFileWriter.write(out);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
