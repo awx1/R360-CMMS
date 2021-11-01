@@ -10,6 +10,8 @@ import spark.Spark;
 
 import java.io.*;
 import java.security.UnresolvedPermission;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -17,18 +19,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Server {
     private static JSONObject database = new JSONObject();
-    private static FileWriter logFileWriter;
 
     public static void main(String[] args) {
-
-        File logFile = new File("Log.txt");
-        try {
-            logFileWriter = new FileWriter(logFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
         String DB_File = "DB.json";
         File initialFile = new File(DB_File);
         InputStream is = null;
@@ -217,12 +209,19 @@ public class Server {
     }
 
     private static void LogChange(String text, JSONObject Data) {
-        String out = text;
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        String out = dtf.format(now);
+        out += ":"+text;
         if (Data != null) {
             out += Data.toString();
         }
         try {
-            logFileWriter.write(out);
+            FileWriter fw = new FileWriter("Log.txt", true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(out);
+            bw.newLine();
+            bw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
