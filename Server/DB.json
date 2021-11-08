@@ -1,6 +1,69 @@
 {
      "Surgical ICU": {
+          "Syringes 8": {
+               "workOrderNum": "64",
+               "inventoryNum": "1234",
+               "faultCode": "300",
+               "ipmProcedure": "Lorem Ipsum sit dolar...",
+               "serviceProvider": "MedTech",
+               "serviceEngineeringCode": "504",
+               "status": 1
+          },
+          "Syringes 9": {
+               "workOrderNum": "64",
+               "inventoryNum": "1234",
+               "faultCode": "300",
+               "ipmProcedure": "Lorem Ipsum sit dolar...",
+               "serviceProvider": "MedTech",
+               "serviceEngineeringCode": "504",
+               "status": 1
+          },
           "Syringes": {
+               "workOrderNum": "64",
+               "inventoryNum": "1234",
+               "faultCode": "300",
+               "ipmProcedure": "Lorem Ipsum sit dolar...",
+               "serviceProvider": "MedTech",
+               "serviceEngineeringCode": "504",
+               "status": 1
+          },
+          "Syringes 4": {
+               "workOrderNum": "64",
+               "inventoryNum": "1234",
+               "faultCode": "300",
+               "ipmProcedure": "Lorem Ipsum sit dolar...",
+               "serviceProvider": "MedTech",
+               "serviceEngineeringCode": "504",
+               "status": 1
+          },
+          "Syringes 5": {
+               "workOrderNum": "64",
+               "inventoryNum": "1234",
+               "faultCode": "300",
+               "ipmProcedure": "Lorem Ipsum sit dolar...",
+               "serviceProvider": "MedTech",
+               "serviceEngineeringCode": "504",
+               "status": 1
+          },
+          "Syringes 6": {
+               "workOrderNum": "64",
+               "inventoryNum": "1234",
+               "faultCode": "300",
+               "ipmProcedure": "Lorem Ipsum sit dolar...",
+               "serviceProvider": "MedTech",
+               "serviceEngineeringCode": "504",
+               "status": 1
+          },
+          "Syringes 7": {
+               "workOrderNum": "64",
+               "inventoryNum": "1234",
+               "faultCode": "300",
+               "ipmProcedure": "Lorem Ipsum sit dolar...",
+               "serviceProvider": "MedTech",
+               "serviceEngineeringCode": "504",
+               "status": 1
+          },
+          "Syringes 2": {
                "workOrderNum": "64",
                "inventoryNum": "1234",
                "faultCode": "300",
@@ -18,7 +81,25 @@
                "serviceEngineeringCode": "504",
                "status": 0
           },
+          "Syringes 3": {
+               "workOrderNum": "64",
+               "inventoryNum": "1234",
+               "faultCode": "300",
+               "ipmProcedure": "Lorem Ipsum sit dolar...",
+               "serviceProvider": "MedTech",
+               "serviceEngineeringCode": "504",
+               "status": 1
+          },
           "Blood Pressure Cuffs": {
+               "workOrderNum": "64",
+               "inventoryNum": "1234",
+               "faultCode": "300",
+               "ipmProcedure": "Lorem Ipsum sit dolar...",
+               "serviceProvider": "MedTech",
+               "serviceEngineeringCode": "504",
+               "status": 1
+          },
+          "Syringes 10": {
                "workOrderNum": "64",
                "inventoryNum": "1234",
                "faultCode": "300",
@@ -29,6 +110,15 @@
           }
      },
      "Cardiology Ward": {
+          "Syringes": {
+               "workOrderNum": "64",
+               "inventoryNum": "1234",
+               "faultCode": "300",
+               "ipmProcedure": "Lorem Ipsum sit dolar...",
+               "serviceProvider": "MedTech",
+               "serviceEngineeringCode": "504",
+               "status": 2
+          },
           "EKG Machines": {
                "workOrderNum": "64",
                "inventoryNum": "1234",

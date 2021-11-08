@@ -19,17 +19,24 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Server {
     private static JSONObject database = new JSONObject();
+    private static JSONObject idArray = new JSONObject();
 
     public static void main(String[] args) {
         String DB_File = "DB.json";
-        File initialFile = new File(DB_File);
+        String ID_File = "ID.json";
+        File initialFile_DB = new File(DB_File);
+        File initialFile_ID = new File(ID_File);
         InputStream is = null;
+        InputStream is2 = null;
         try {
-            is = new FileInputStream(initialFile);
+            is = new FileInputStream(initialFile_DB);
+        } catch (FileNotFoundException ignored) {
+        }
+        try {
+            is2 = new FileInputStream(initialFile_ID);
         } catch (FileNotFoundException ignored) {
         }
 
-        JSONObject[] databaseArray = new JSONObject[1];
         if (is != null) {
             JSONTokener tokenizer = new JSONTokener(is);
             database = new JSONObject(tokenizer);
@@ -37,19 +44,33 @@ public class Server {
         else {
             database = new JSONObject();
         }
-        databaseArray[0] = database;
-        AtomicReference<ShutdownHandler> shutdownListener = new AtomicReference<>(new ShutdownHandler(databaseArray, "DB.json"));
+        if (is2 != null) {
+            JSONTokener tokenizer = new JSONTokener(is2);
+            idArray = new JSONObject(tokenizer);
+        }
+        else {
+            idArray = new JSONObject();
+        }
+        AtomicReference<ShutdownHandler> shutdownListener = new AtomicReference<>(new ShutdownHandler(database, DB_File));
         AtomicReference<Boolean> Update = new AtomicReference<>(true);
+        AtomicReference<Boolean> Update2 = new AtomicReference<>(true);
         //shutdownListener.run();
         Runtime.getRuntime().addShutdownHook(shutdownListener.get());
 
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
         exec.scheduleAtFixedRate(() -> {
             if (Update.get()) {
-                shutdownListener.get().Database = databaseArray;
+                shutdownListener.get().Database = database;
                 shutdownListener.get().start();
-                shutdownListener.set(new ShutdownHandler(databaseArray, "DB.json"));
+                shutdownListener.set(new ShutdownHandler(database, DB_File));
                 Update.set(false);
+            }
+        }, 0, 5, TimeUnit.SECONDS);
+        exec.scheduleAtFixedRate(() -> {
+            if (Update2.get()) {
+                ShutdownHandler saver = new ShutdownHandler(idArray, ID_File);
+                saver.start();
+                Update2.set(false);
             }
         }, 0, 5, TimeUnit.SECONDS);
 
@@ -80,9 +101,9 @@ public class Server {
                     System.out.println(request.attributes().toString());
                     System.out.println(request.body());
                     System.out.println(request.params().toString());
-                    shutdownListener.get().Database = databaseArray;
+                    shutdownListener.get().Database = database;
                     shutdownListener.get().start();
-                    shutdownListener.set(new ShutdownHandler(databaseArray, "DB2.json"));
+                    shutdownListener.set(new ShutdownHandler(database, "DB2.json"));
                     return database.toString();
                 });
 
@@ -100,7 +121,6 @@ public class Server {
                     JSONTokener tokenizer = new JSONTokener(request.body());
                     JSONObject newObject = new JSONObject(tokenizer);
                     database = newObject;
-                    databaseArray[0] = database;
                     Update.set(true);
                     LogChange("Replace Database With:",newObject);
                     return database;
@@ -155,6 +175,24 @@ public class Server {
                     return getObject(database,request).remove(request.params().get(":field")).toString();
                 });
 
+
+        Spark.post( //Adds a new JSON object to a specific category
+                "/ID/:tag/",
+                (request, response) -> {
+                    System.out.println("Post:"+request.body());
+                    JSONTokener tokenizer = new JSONTokener(request.body());
+                    JSONObject newObject = new JSONObject(tokenizer);
+                    Update2.set(true);
+                    LogChange("ID Replace "+request.params().get(":tag")+" With:",newObject);
+                    return idArray.put(request.params().get(":tag"), newObject);
+                });
+        Spark.get(//Returns JSON object
+                "/ID/",
+                (request, response) -> idArray.toString(5));
+        Spark.get(//Returns JSON object
+                "/ID/:tag/",
+                (request, response) -> getTag(idArray,request).toString(5));
+
     }
 
     /**
@@ -206,6 +244,10 @@ public class Server {
 
     private static JSONObject getCategory(JSONObject DB, Request request) {
         return getCategory(DB, request.params().get(":category"));
+    }
+
+    private static JSONObject getTag(JSONObject DB, Request request) {
+        return getCategory(DB, request.params().get(":tag"));
     }
 
     private static void LogChange(String text, JSONObject Data) {
