@@ -3,11 +3,14 @@ package edu.rice.r360cmms;
 
 import static spark.Spark.staticFileLocation;
 
+import net.glxn.qrgen.QRCode;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import spark.Request;
 import spark.Spark;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.security.UnresolvedPermission;
 import java.time.LocalDateTime;
@@ -192,6 +195,13 @@ public class Server {
         Spark.get(//Returns JSON object
                 "/ID/:tag/",
                 (request, response) -> getTag(idArray,request).toString(5));
+        Spark.get(//Returns JSON object
+                "/QR/:string/",
+                (request, response) -> {
+                    BufferedImage image = generateQRCodeImage(request.params().get(":string"));
+                    response.type("image/png");
+                    return imageToPng(image);
+                    });
 
     }
 
@@ -266,6 +276,36 @@ public class Server {
             bw.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static BufferedImage generateQRCodeImage(String barcodeText) throws Exception {
+        int MaxLength = 2953; //This is the max size the qr code can reach.
+        System.out.println(barcodeText.length());
+        String textTrimmed = barcodeText.substring(0, Math.min(MaxLength, barcodeText.length()));
+        ByteArrayOutputStream stream = QRCode
+                .from(textTrimmed)
+                .stream();
+        ByteArrayInputStream bis = new ByteArrayInputStream(stream.toByteArray());
+
+        return ImageIO.read(bis);
+    }
+
+
+
+    /**
+     * Given a BufferedImage, convert it to PNG format.
+     *
+     * @return the raw PNG bytes
+     */
+    public static byte[] imageToPng(BufferedImage image) throws IOException {
+        var os = new ByteArrayOutputStream();
+        var success = ImageIO.write(image, "png", os);
+        if (!success) {
+            throw new RuntimeException(
+                    "ImageIO internal failure"); // useless feedback, but it's all we have
+        } else {
+            return os.toByteArray();
         }
     }
 }
