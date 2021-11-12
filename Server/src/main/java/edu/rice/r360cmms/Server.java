@@ -236,7 +236,7 @@ public class Server {
         Spark.get(//Returns JSON object
                 "/QR/",
                 (request, response) -> {
-                    BufferedImage image = generateQRCodeImage(String.valueOf(count));
+                    BufferedImage image = generateQRCodeImage("" + count);
                     count += 1;
                     Update3.set(true);
                     response.type("image/png");
