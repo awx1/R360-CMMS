@@ -23,12 +23,29 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Server {
     private static JSONObject database = new JSONObject();
     private static JSONObject idArray = new JSONObject();
+    private static int count = 0;
 
     public static void main(String[] args) {
         String DB_File = "DB.json";
         String ID_File = "ID.json";
+        String values_File = "values.val";
         File initialFile_DB = new File(DB_File);
         File initialFile_ID = new File(ID_File);
+        File valuesFile = new File(values_File);
+        try {
+            FileInputStream fi = new FileInputStream(valuesFile);
+            ObjectInputStream oi = new ObjectInputStream(fi);
+            count = (int) oi.readObject();
+            oi.close();
+            fi.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("Did not find a a value file to import");
+            count = 0;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
         InputStream is = null;
         InputStream is2 = null;
         try {
@@ -57,6 +74,7 @@ public class Server {
         AtomicReference<ShutdownHandler> shutdownListener = new AtomicReference<>(new ShutdownHandler(database, DB_File));
         AtomicReference<Boolean> Update = new AtomicReference<>(true);
         AtomicReference<Boolean> Update2 = new AtomicReference<>(true);
+        AtomicReference<Boolean> Update3 = new AtomicReference<>(true);
         //shutdownListener.run();
         Runtime.getRuntime().addShutdownHook(shutdownListener.get());
 
@@ -74,6 +92,19 @@ public class Server {
                 ShutdownHandler saver = new ShutdownHandler(idArray, ID_File);
                 saver.start();
                 Update2.set(false);
+            }
+        }, 0, 5, TimeUnit.SECONDS);
+        exec.scheduleAtFixedRate(() -> {
+            if (Update3.get()) {
+                try {
+                    FileOutputStream f = new FileOutputStream(valuesFile);
+                    ObjectOutputStream o = new ObjectOutputStream(f);
+                    o.writeObject(count);
+                    f.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Update3.set(false);
             }
         }, 0, 5, TimeUnit.SECONDS);
 
@@ -199,6 +230,15 @@ public class Server {
                 "/QR/:string/",
                 (request, response) -> {
                     BufferedImage image = generateQRCodeImage(request.params().get(":string"));
+                    response.type("image/png");
+                    return imageToPng(image);
+                    });
+        Spark.get(//Returns JSON object
+                "/QR/",
+                (request, response) -> {
+                    BufferedImage image = generateQRCodeImage(String.valueOf(count));
+                    count += 1;
+                    Update3.set(true);
                     response.type("image/png");
                     return imageToPng(image);
                     });
