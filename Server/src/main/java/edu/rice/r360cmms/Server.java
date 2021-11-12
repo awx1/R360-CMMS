@@ -325,6 +325,7 @@ public class Server {
         String textTrimmed = barcodeText.substring(0, Math.min(MaxLength, barcodeText.length()));
         ByteArrayOutputStream stream = QRCode
                 .from(textTrimmed)
+                .withSize(250, 250)
                 .stream();
         ByteArrayInputStream bis = new ByteArrayInputStream(stream.toByteArray());
 
