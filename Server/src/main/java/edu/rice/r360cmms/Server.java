@@ -10,6 +10,7 @@ import spark.Request;
 import spark.Spark;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.security.UnresolvedPermission;
@@ -328,8 +329,16 @@ public class Server {
                 .withSize(250, 250)
                 .stream();
         ByteArrayInputStream bis = new ByteArrayInputStream(stream.toByteArray());
+        BufferedImage image = ImageIO.read(bis);
+        Font font = new Font("Arial", Font.BOLD, 18);
 
-        return ImageIO.read(bis);
+        Graphics g = image.getGraphics();
+        g.setFont(font);
+        g.setColor(Color.BLACK);
+        FontMetrics metrics = g.getFontMetrics(font);
+        int positionX = (image.getWidth() - metrics.stringWidth(barcodeText)) / 2;
+        g.drawString(barcodeText, positionX, 240);
+        return image;
     }
 
 
