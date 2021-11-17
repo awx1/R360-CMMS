@@ -243,6 +243,78 @@ public class Server {
                     response.type("image/png");
                     return imageToPng(image);
                     });
+        Spark.get(//Returns JSON object
+                "/QR1/",
+                (request, response) -> {
+                    BufferedImage image = generateQRCodeImage("" + count);
+                    count += 1;
+                    Update3.set(true);
+                    response.type("image/png");
+                    return imageToPng(image);
+                    });
+        Spark.get(//Returns JSON object
+                "/QR2/",
+                (request, response) -> {
+                    BufferedImage image = generateQRCodeImage("" + count);
+                    count += 1;
+                    Update3.set(true);
+                    response.type("image/png");
+                    return imageToPng(image);
+                    });
+        Spark.get(//Returns JSON object
+                "/QR3/",
+                (request, response) -> {
+                    BufferedImage image = generateQRCodeImage("" + count);
+                    count += 1;
+                    Update3.set(true);
+                    response.type("image/png");
+                    return imageToPng(image);
+                    });
+        Spark.get(//Returns JSON object
+                "/QR4/",
+                (request, response) -> {
+                    BufferedImage image = generateQRCodeImage("" + count);
+                    count += 1;
+                    Update3.set(true);
+                    response.type("image/png");
+                    return imageToPng(image);
+                    });
+        Spark.get(//Returns JSON object
+                "/QR5/",
+                (request, response) -> {
+                    BufferedImage image = generateQRCodeImage("" + count);
+                    count += 1;
+                    Update3.set(true);
+                    response.type("image/png");
+                    return imageToPng(image);
+                    });
+        Spark.get(//Returns JSON object
+                "/QR6/",
+                (request, response) -> {
+                    BufferedImage image = generateQRCodeImage("" + count);
+                    count += 1;
+                    Update3.set(true);
+                    response.type("image/png");
+                    return imageToPng(image);
+                    });
+        Spark.get(//Returns JSON object
+                "/QR7/",
+                (request, response) -> {
+                    BufferedImage image = generateQRCodeImage("" + count);
+                    count += 1;
+                    Update3.set(true);
+                    response.type("image/png");
+                    return imageToPng(image);
+                    });
+        Spark.get(//Returns JSON object
+                "/QR8/",
+                (request, response) -> {
+                    BufferedImage image = generateQRCodeImage("" + count);
+                    count += 1;
+                    Update3.set(true);
+                    response.type("image/png");
+                    return imageToPng(image);
+                    });
 
     }
 
@@ -324,21 +396,38 @@ public class Server {
         int MaxLength = 2953; //This is the max size the qr code can reach.
         System.out.println(barcodeText.length());
         String textTrimmed = barcodeText.substring(0, Math.min(MaxLength, barcodeText.length()));
+        int size = 500;
         ByteArrayOutputStream stream = QRCode
                 .from(textTrimmed)
-                .withSize(250, 250)
+                .withSize(size, size)
                 .stream();
         ByteArrayInputStream bis = new ByteArrayInputStream(stream.toByteArray());
         BufferedImage image = ImageIO.read(bis);
         Font font = new Font("Arial", Font.BOLD, 18);
 
-        Graphics g = image.getGraphics();
+        BufferedImage imageout = new BufferedImage(image.getWidth(),image.getHeight()+40,BufferedImage.TYPE_INT_ARGB);
+        Graphics g = imageout.getGraphics();
+        g.setColor(Color.WHITE);
+        g.fillRect(0,0,imageout.getWidth(),imageout.getHeight());
         g.setFont(font);
         g.setColor(Color.BLACK);
         FontMetrics metrics = g.getFontMetrics(font);
-        int positionX = (image.getWidth() - metrics.stringWidth(barcodeText)) / 2;
-        g.drawString(barcodeText, positionX, 240);
-        return image;
+        String hospitalName = "Testing Hospital";
+        int positionXCode = (imageout.getWidth() - metrics.stringWidth(barcodeText)) / 2;
+        int positionXName = (imageout.getWidth() - metrics.stringWidth(hospitalName)) / 2;
+        if (positionXCode < 0) {
+            positionXCode = 0;
+        }
+        if (positionXName < 0) {
+            positionXName = 0;
+        }
+        int offsetTop = 15;
+        int offsetBottom = 5;
+        g.drawImage(image,0,20,null);
+        g.drawString(barcodeText, positionXCode, imageout.getHeight() - offsetBottom);
+
+        g.drawString(hospitalName, positionXName, offsetTop);
+        return imageout;
     }
 
 
