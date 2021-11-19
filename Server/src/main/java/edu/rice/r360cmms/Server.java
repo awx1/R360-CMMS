@@ -20,12 +20,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Server {
     private static JSONObject database = new JSONObject();
     private static JSONObject idArray = new JSONObject();
+    private static ReentrantLock countLock = new ReentrantLock();
     private static int count = 0;
-
     public static void main(String[] args) {
         String DB_File = "DB.json";
         String ID_File = "ID.json";
@@ -33,10 +34,11 @@ public class Server {
         File initialFile_DB = new File(DB_File);
         File initialFile_ID = new File(ID_File);
         File valuesFile = new File(values_File);
+
         try {
             FileInputStream fi = new FileInputStream(valuesFile);
             ObjectInputStream oi = new ObjectInputStream(fi);
-            count = (int) oi.readObject();
+            count =(int) oi.readObject();
             oi.close();
             fi.close();
         } catch (FileNotFoundException e) {
@@ -237,81 +239,63 @@ public class Server {
         Spark.get(//Returns JSON object
                 "/QR/",
                 (request, response) -> {
-                    BufferedImage image = generateQRCodeImage("" + count);
-                    count += 1;
-                    Update3.set(true);
+                    BufferedImage image = getQRCodeNext(Update3);
                     response.type("image/png");
                     return imageToPng(image);
                     });
         Spark.get(//Returns JSON object
                 "/QR1/",
                 (request, response) -> {
-                    BufferedImage image = generateQRCodeImage("" + count);
-                    count += 1;
-                    Update3.set(true);
+                    BufferedImage image = getQRCodeNext(Update3);
                     response.type("image/png");
                     return imageToPng(image);
                     });
         Spark.get(//Returns JSON object
                 "/QR2/",
                 (request, response) -> {
-                    BufferedImage image = generateQRCodeImage("" + count);
-                    count += 1;
-                    Update3.set(true);
+                    BufferedImage image = getQRCodeNext(Update3);
                     response.type("image/png");
                     return imageToPng(image);
                     });
         Spark.get(//Returns JSON object
                 "/QR3/",
                 (request, response) -> {
-                    BufferedImage image = generateQRCodeImage("" + count);
-                    count += 1;
-                    Update3.set(true);
+                    BufferedImage image = getQRCodeNext(Update3);
                     response.type("image/png");
                     return imageToPng(image);
                     });
         Spark.get(//Returns JSON object
                 "/QR4/",
                 (request, response) -> {
-                    BufferedImage image = generateQRCodeImage("" + count);
-                    count += 1;
-                    Update3.set(true);
+                    BufferedImage image = getQRCodeNext(Update3);
                     response.type("image/png");
                     return imageToPng(image);
                     });
         Spark.get(//Returns JSON object
                 "/QR5/",
                 (request, response) -> {
-                    BufferedImage image = generateQRCodeImage("" + count);
-                    count += 1;
-                    Update3.set(true);
+                    BufferedImage image = getQRCodeNext(Update3);
                     response.type("image/png");
                     return imageToPng(image);
                     });
         Spark.get(//Returns JSON object
                 "/QR6/",
                 (request, response) -> {
-                    BufferedImage image = generateQRCodeImage("" + count);
-                    count += 1;
-                    Update3.set(true);
+                    BufferedImage image = getQRCodeNext(Update3);
                     response.type("image/png");
                     return imageToPng(image);
                     });
         Spark.get(//Returns JSON object
                 "/QR7/",
                 (request, response) -> {
-                    BufferedImage image = generateQRCodeImage("" + count);
-                    count += 1;
-                    Update3.set(true);
+                    BufferedImage image = getQRCodeNext(Update3);
                     response.type("image/png");
                     return imageToPng(image);
                     });
         Spark.get(//Returns JSON object
                 "/QR8/",
                 (request, response) -> {
-                    BufferedImage image = generateQRCodeImage("" + count);
-                    count += 1;
-                    Update3.set(true);
+                    BufferedImage image = getQRCodeNext(Update3);
                     response.type("image/png");
                     return imageToPng(image);
                     });
@@ -431,6 +415,18 @@ public class Server {
     }
 
 
+    private static BufferedImage getQRCodeNext(AtomicReference<Boolean> Update3) throws Exception {
+        countLock.lock();
+        BufferedImage image = null;
+        try {
+            image = generateQRCodeImage("" + count);
+            count += 1;
+        } finally {
+            countLock.unlock();
+        }
+        Update3.set(true);
+        return image;
+    }
 
     /**
      * Given a BufferedImage, convert it to PNG format.
