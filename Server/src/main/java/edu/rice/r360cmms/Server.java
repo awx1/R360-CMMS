@@ -16,6 +16,7 @@ import java.io.*;
 import java.security.UnresolvedPermission;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -27,6 +28,7 @@ public class Server {
     private static JSONObject idArray = new JSONObject();
     private static ReentrantLock countLock = new ReentrantLock();
     private static int count = 0;
+    private static String[] keys = new String[0];
     public static void main(String[] args) {
         String DB_File = "DB.json";
         String ID_File = "ID.json";
@@ -39,14 +41,13 @@ public class Server {
             FileInputStream fi = new FileInputStream(valuesFile);
             ObjectInputStream oi = new ObjectInputStream(fi);
             count =(int) oi.readObject();
+            keys =(String[]) oi.readObject();
             oi.close();
             fi.close();
         } catch (FileNotFoundException e) {
             System.out.println("Did not find a a value file to import");
             count = 0;
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         InputStream is = null;
@@ -102,7 +103,13 @@ public class Server {
                 try {
                     FileOutputStream f = new FileOutputStream(valuesFile);
                     ObjectOutputStream o = new ObjectOutputStream(f);
-                    o.writeObject(count);
+                    countLock.lock();
+                    try {
+                        o.writeObject(count);
+                        o.writeObject(keys);
+                    } finally {
+                        countLock.unlock();
+                    }
                     f.close();
                 } catch (IOException e) {
                     e.printStackTrace();
