@@ -16,6 +16,7 @@ import java.io.*;
 import java.security.UnresolvedPermission;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -433,6 +434,15 @@ public class Server {
         }
         Update3.set(true);
         return image;
+    }
+
+    private static boolean checkAuthKey(String key){
+        for (int x = 0; x <= keys.length; x++) {
+            if (Objects.equals(keys[x], key)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
