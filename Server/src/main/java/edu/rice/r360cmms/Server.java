@@ -159,7 +159,7 @@ public class Server {
                     JSONObject data = (JSONObject) newObject.get("Data");
                     if (checkAuthKey(newObject.get("Key").toString())) {
                         Update.set(true);
-                        LogChange("Replace Database With:",newObject);
+                        LogChange("Replace Database With:",data);
                         return database;
                     }
                     return "Bad auth Key";
@@ -173,8 +173,8 @@ public class Server {
                     JSONObject data = (JSONObject) newObject.get("Data");
                     if (checkAuthKey(newObject.get("Key").toString())) {
                         Update.set(true);
-                        LogChange("Replace "+request.params().get(":category")+" With:",newObject);
-                        return database.put(request.params().get(":category"), newObject);
+                        LogChange("Replace "+request.params().get(":category")+" With:",data);
+                        return database.put(request.params().get(":category"), data);
                     }
                     return "Bad auth Key";
                 });
