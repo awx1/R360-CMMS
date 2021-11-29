@@ -1,8 +1,6 @@
 package edu.rice.r360cmms;
 
 
-import static spark.Spark.staticFileLocation;
-
 import net.glxn.qrgen.QRCode;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -13,16 +11,16 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.security.UnresolvedPermission;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
+
+import static spark.Spark.staticFileLocation;
 
 public class Server {
     private static JSONObject database = new JSONObject();
@@ -421,7 +419,6 @@ public class Server {
         g.drawString(hospitalName, positionXName, offsetTop);
         return imageout;
     }
-
 
     private static BufferedImage getQRCodeNext(AtomicReference<Boolean> Update3) throws Exception {
         countLock.lock();
