@@ -149,14 +149,6 @@ public class Server {
                     shutdownListener.set(new ShutdownHandler(database, "DB2.json"));
                     return database.toString();
                 });
-
-        Spark.put( //Replaces JSON object in a specific category
-                "/DB/:category/:object/:field/",
-                (request, response) -> {
-                    JSONObject newObject = new JSONObject(); // need to replace this with the object that gets past to the function.
-                    Update.set(true);
-                    return getObject(database,request).put(request.params().get(":field"), newObject);
-                });
         Spark.post( //Adds a new JSON object to a specific category
                 "/DB/",
                 (request, response) -> {
@@ -164,9 +156,13 @@ public class Server {
                     JSONTokener tokenizer = new JSONTokener(request.body());
                     JSONObject newObject = new JSONObject(tokenizer);
                     database = newObject;
-                    Update.set(true);
-                    LogChange("Replace Database With:",newObject);
-                    return database;
+                    JSONObject data = (JSONObject) newObject.get("Data");
+                    if (checkAuthKey(newObject.get("Key").toString())) {
+                        Update.set(true);
+                        LogChange("Replace Database With:",newObject);
+                        return database;
+                    }
+                    return "Bad auth Key";
                 });
         Spark.post( //Adds a new JSON object to a specific category
                 "/DB/:category/",
@@ -174,9 +170,13 @@ public class Server {
                     System.out.println("Post:"+request.body());
                     JSONTokener tokenizer = new JSONTokener(request.body());
                     JSONObject newObject = new JSONObject(tokenizer);
-                    Update.set(true);
-                    LogChange("Replace "+request.params().get(":category")+" With:",newObject);
-                    return database.put(request.params().get(":category"), newObject);
+                    JSONObject data = (JSONObject) newObject.get("Data");
+                    if (checkAuthKey(newObject.get("Key").toString())) {
+                        Update.set(true);
+                        LogChange("Replace "+request.params().get(":category")+" With:",newObject);
+                        return database.put(request.params().get(":category"), newObject);
+                    }
+                    return "Bad auth Key";
                 });
         Spark.post( //Adds a new JSON object to a specific category
                 "/DB/:category/:object/",
@@ -184,9 +184,13 @@ public class Server {
                     System.out.println("Post:"+request.body());
                     JSONTokener tokenizer = new JSONTokener(request.body());
                     JSONObject newObject = new JSONObject(tokenizer);
-                    Update.set(true);
-                    LogChange("Replace "+request.params().get(":category")+"/"+request.params().get(":object")+" With:",newObject);
-                    return getCategory(database,request).put(request.params().get(":object"), newObject);
+                    JSONObject data = (JSONObject) newObject.get("Data");
+                    if (checkAuthKey(newObject.get("Key").toString())) {
+                        Update.set(true);
+                        LogChange("Replace "+request.params().get(":category")+"/"+request.params().get(":object")+" With:",data);
+                        return getCategory(database,request).put(request.params().get(":object"), data);
+                    }
+                    return "Bad auth Key";
                 });
         Spark.post( //Adds a new JSON object to a specific category
                 "/DB/:category/:object/:field/",
@@ -194,9 +198,13 @@ public class Server {
                     System.out.println("Post:"+request.body());
                     JSONTokener tokenizer = new JSONTokener(request.body());
                     JSONObject newObject = new JSONObject(tokenizer);
-                    Update.set(true);
-                    LogChange("Replace "+request.params().get(":category")+"/"+request.params().get(":object")+"/"+request.params().get(":field")+" With:",newObject);
-                    return getObject(database,request).put(request.params().get(":field"), newObject);
+                    JSONObject data = (JSONObject) newObject.get("Data");
+                    if (checkAuthKey(newObject.get("Key").toString())) {
+                        Update.set(true);
+                        LogChange("Replace "+request.params().get(":category")+"/"+request.params().get(":object")+"/"+request.params().get(":field")+" With:",data);
+                        return getObject(database,request).put(request.params().get(":field"), data);
+                    }
+                    return "Bad auth Key";
                 });
         Spark.delete( //Deletes an entire category
                 "/DB/:category/",
