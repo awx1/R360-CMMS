@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -27,7 +28,7 @@ public class Server {
     private static JSONObject idArray = new JSONObject();
     private static ReentrantLock countLock = new ReentrantLock();
     private static int count = 0;
-    private static String[] keys = new String[0];
+    private static ArrayList<String> keys = new ArrayList<>();
     public static void main(String[] args) {
         String DB_File = "DB.json";
         String ID_File = "ID.json";
@@ -40,7 +41,7 @@ public class Server {
             FileInputStream fi = new FileInputStream(valuesFile);
             ObjectInputStream oi = new ObjectInputStream(fi);
             count =(int) oi.readObject();
-            keys =(String[]) oi.readObject();
+            keys =(ArrayList<String>) oi.readObject();
             oi.close();
             fi.close();
         } catch (FileNotFoundException e) {
@@ -442,12 +443,18 @@ public class Server {
     }
 
     private static boolean checkAuthKey(String key){
-        for (int x = 0; x <= keys.length; x++) {
-            if (Objects.equals(keys[x], key)) {
+        for (int x = 0; x <= keys.size(); x++) {
+            if (Objects.equals(keys.get(x), key)) {
                 return true;
             }
         }
         return false;
+    }
+
+    private static void addAuthKey(String key){
+        if (!checkAuthKey(key)){
+            keys.add(key);
+        }
     }
 
     /**
