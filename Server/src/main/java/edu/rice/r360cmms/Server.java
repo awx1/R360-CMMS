@@ -41,7 +41,7 @@ public class Server {
             FileInputStream fi = new FileInputStream(valuesFile);
             ObjectInputStream oi = new ObjectInputStream(fi);
             count =(int) oi.readObject();
-            keys =(ArrayList<String>) oi.readObject();
+            //keys =(ArrayList<String>) oi.readObject();
             oi.close();
             fi.close();
         } catch (FileNotFoundException e) {
@@ -80,6 +80,7 @@ public class Server {
         AtomicReference<Boolean> Update2 = new AtomicReference<>(true);
         AtomicReference<Boolean> Update3 = new AtomicReference<>(true);
         //shutdownListener.run();
+        System.out.println(keys);
         Runtime.getRuntime().addShutdownHook(shutdownListener.get());
 
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
@@ -210,21 +211,37 @@ public class Server {
         Spark.delete( //Deletes an entire category
                 "/DB/:category/",
                 (request, response) -> {
-                    LogChange("Remove "+request.params().get(":category"),null);
-                    return database.remove(request.params().get(":category")).toString();
+                    JSONTokener tokenizer = new JSONTokener(request.body());
+                    JSONObject newObject = new JSONObject(tokenizer);
+                    if (checkAuthKey(newObject.get("Key").toString())) {
+                        LogChange("Remove "+request.params().get(":category"),null);
+                        return database.remove(request.params().get(":category")).toString();
+                    }
+                    return "Bad auth Key";
                 });
         Spark.delete( //Deletes JSON object in a specific category
                 "/DB/:category/:object/",
                 (request, response) -> {
-                    LogChange("Remove "+request.params().get(":category")+"/"+request.params().get(":object"),null);
-                    return getCategory(database,request).remove(request.params(":object")).toString();
+                    JSONTokener tokenizer = new JSONTokener(request.body());
+                    JSONObject newObject = new JSONObject(tokenizer);
+                    if (checkAuthKey(newObject.get("Key").toString())) {
+                        LogChange("Remove "+request.params().get(":category")+"/"+request.params().get(":object"),null);
+                        return getCategory(database,request).remove(request.params(":object")).toString();
+                    }
+                    return "Bad auth Key";
+
 
                 });
         Spark.delete(//Delete a specific field
                 "/DB/:category/:object/:field/",
                 (request, response) -> {
-                    LogChange("Remove "+request.params().get(":category")+"/"+request.params().get(":object")+"/"+request.params().get(":field"),null);
-                    return getObject(database,request).remove(request.params().get(":field")).toString();
+                    JSONTokener tokenizer = new JSONTokener(request.body());
+                    JSONObject newObject = new JSONObject(tokenizer);
+                    if (checkAuthKey(newObject.get("Key").toString())) {
+                        LogChange("Remove "+request.params().get(":category")+"/"+request.params().get(":object")+"/"+request.params().get(":field"),null);
+                        return getObject(database,request).remove(request.params().get(":field")).toString();
+                    }
+                    return "Bad auth Key";
                 });
 
 
@@ -443,12 +460,13 @@ public class Server {
     }
 
     private static boolean checkAuthKey(String key){
-        for (int x = 0; x <= keys.size(); x++) {
-            if (Objects.equals(keys.get(x), key)) {
-                return true;
-            }
-        }
-        return false;
+        return keys.contains(key);
+        //for (int x = 0; x <= keys.size(); x++) {
+        //    if (Objects.equals(keys.get(x), key)) {
+        //        return true;
+        //    }
+        //}
+        //return false;
     }
 
     private static void addAuthKey(String key){
