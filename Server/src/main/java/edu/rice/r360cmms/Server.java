@@ -351,10 +351,23 @@ public class Server {
 
     }
 
+    /**
+     * Helper function used to return a JSONObject of a category
+     * @param DB database object
+     * @param category index of the requested category, e.g. "Surgical ICU"
+     * @return the requested category object, null if the category doesn't exist
+     */
     private static JSONObject getCategory(JSONObject DB, String category) {
         return (JSONObject) getHandler(DB,category);
     }
 
+    /**
+     * Helper function used to return a JSONObject of an object in a category
+     * @param DB database object
+     * @param category index of the requested category, e.g. "Surgical ICU"
+     * @param object the index of the requested object in category, e.g. "Syringes 8"
+     * @return the requested object, null if such category or object doesn't exist
+     */
     private static JSONObject getObject(JSONObject DB, String category, String object) {
         JSONObject cat =  getCategory(DB, category);
         if (cat == null) {
@@ -364,6 +377,14 @@ public class Server {
         }
     }
 
+    /**
+     * Helper function used to return a JSONObject of a field of an object in a category
+     * @param DB the database object
+     * @param category index of the requested category, e.g. "Surgical ICU"
+     * @param object the index of the requested object in category, e.g. "Syringes 8"
+     * @param field the key of the requested field of the object, e.g. "workOrderNum"
+     * @return the object containing the key and value; null if the category, object or field doesn't exist
+     **/
     private static JSONObject getField(JSONObject DB, String category, String object, String field) {
         JSONObject OField = getObject(DB, category, object);
         if (OField == null) {
@@ -373,22 +394,51 @@ public class Server {
         }
     }
 
+    /**
+     * A helper function that returns the field object that is requested by the Request
+     * @param DB the database object
+     * @param request the network get Request that requests a certain field of an object, e.g. "workOrderNum"
+     * @return the requested field; null if it doesn't exist
+     */
     private static JSONObject getField(JSONObject DB, Request request) {
         return getField(DB, request.params().get(":category"),request.params().get(":object"),request.params().get(":field"));
     }
 
+    /**
+     * A helper function that returns the object in a certain category that is requested by the Request
+     * @param DB the database object
+     * @param request the network get Request that requests a certain object, e.g. "Syringes 8"
+     * @return the requested object; null if it doesn't exist
+     */
     private static JSONObject getObject(JSONObject DB, Request request) {
         return getObject(DB, request.params().get(":category"),request.params().get(":object"));
     }
 
+    /**
+     * A helper function that returns the category that is requested by the Request
+     * @param DB the database object
+     * @param request the network get Request that requests a certain category, e.g. "Surgical ICU"
+     * @return the requested category; null if it doesn't exist
+     */
     private static JSONObject getCategory(JSONObject DB, Request request) {
         return getCategory(DB, request.params().get(":category"));
     }
 
+    /**
+     * Return the object specified by tag
+     * @param DB the databse object
+     * @param request the Request sent by the frontend
+     * @return the object specified by tag; null if such object doesn't exist
+     */
     private static JSONObject getTag(JSONObject DB, Request request) {
         return getCategory(DB, request.params().get(":tag"));
     }
 
+    /**
+     * Used to write log to Log.txt
+     * @param text a log string
+     * @param Data Data field in request's body
+     */
     private static void LogChange(String text, JSONObject Data) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
@@ -408,6 +458,12 @@ public class Server {
         }
     }
 
+    /**
+     * Given a String, encode it into a QR code
+     * @param barcodeText the text to be encoded
+     * @return a BufferedImage, which is a QR code encoding barcodeText
+     * @throws Exception
+     */
     public static BufferedImage generateQRCodeImage(String barcodeText) throws Exception {
         int MaxLength = 2953; //This is the max size the qr code can reach.
         System.out.println(barcodeText.length());
@@ -459,6 +515,11 @@ public class Server {
         return image;
     }
 
+    /**
+     * Given a key provided by user, determine if the key is valid
+     * @param key key provided in the request
+     * @return true if key is valid; false otherwise
+     */
     private static boolean checkAuthKey(String key){
         return keys.contains(key);
         //for (int x = 0; x <= keys.size(); x++) {
@@ -469,6 +530,10 @@ public class Server {
         //return false;
     }
 
+    /**
+     * Register a key to be an authentication key
+     * @param key the key to be registered
+     */
     private static void addAuthKey(String key){
         if (!checkAuthKey(key)){
             keys.add(key);
