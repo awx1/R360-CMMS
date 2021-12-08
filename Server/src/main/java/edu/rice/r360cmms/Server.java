@@ -41,7 +41,7 @@ public class Server {
             FileInputStream fi = new FileInputStream(valuesFile);
             ObjectInputStream oi = new ObjectInputStream(fi);
             count =(int) oi.readObject();
-            //keys =(ArrayList<String>) oi.readObject();
+            keys =(ArrayList<String>) oi.readObject();
             oi.close();
             fi.close();
         } catch (FileNotFoundException e) {
@@ -50,6 +50,7 @@ public class Server {
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
+        addAuthKey("SAHTesting449496");
         InputStream is = null;
         InputStream is2 = null;
         try {
@@ -157,13 +158,17 @@ public class Server {
                     System.out.println("Post:"+request.body());
                     JSONTokener tokenizer = new JSONTokener(request.body());
                     JSONObject newObject = new JSONObject(tokenizer);
-                    database = newObject;
+
                     JSONObject data = (JSONObject) newObject.get("Data");
+
                     if (checkAuthKey(newObject.get("Key").toString())) {
                         Update.set(true);
+                        database = data;
+                        System.out.println("Post Test1:");
                         LogChange("Replace Database With:",data);
                         return database;
                     }
+                    System.out.println("Post Test2:");
                     return "Bad auth Key";
                 });
         Spark.post( //Adds a new JSON object to a specific category
@@ -178,6 +183,7 @@ public class Server {
                         LogChange("Replace "+request.params().get(":category")+" With:",data);
                         return database.put(request.params().get(":category"), data);
                     }
+
                     return "Bad auth Key";
                 });
         Spark.post( //Adds a new JSON object to a specific category
@@ -521,6 +527,7 @@ public class Server {
      * @return true if key is valid; false otherwise
      */
     private static boolean checkAuthKey(String key){
+
         return keys.contains(key);
         //for (int x = 0; x <= keys.size(); x++) {
         //    if (Objects.equals(keys.get(x), key)) {

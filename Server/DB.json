@@ -1,75 +1,72 @@
 {
-     "Data": {
-          "Surgical ICU": {
-               "Syringes": {
-                    "workOrderNum": "64",
-                    "inventoryNum": "1234",
-                    "faultCode": "300",
-                    "ipmProcedure": "Lorem Ipsum sit dolar...",
-                    "serviceProvider": "MedTech",
-                    "serviceEngineeringCode": "504",
-                    "status": 1
-               },
-               "Surgical Masks": {
-                    "workOrderNum": "64",
-                    "inventoryNum": "1234",
-                    "faultCode": "300",
-                    "ipmProcedure": "Lorem Ipsum sit dolar...",
-                    "serviceProvider": "MedTech",
-                    "serviceEngineeringCode": "504",
-                    "status": 0
-               },
-               "Blood Pressure Cuffs": {
-                    "workOrderNum": "64",
-                    "inventoryNum": "1234",
-                    "faultCode": "300",
-                    "ipmProcedure": "Lorem Ipsum sit dolar...",
-                    "serviceProvider": "MedTech",
-                    "serviceEngineeringCode": "504",
-                    "status": 1
-               }
+     "Surgical ICU": {
+          "Syringes": {
+               "workOrderNum": "64",
+               "inventoryNum": "1234",
+               "faultCode": "300",
+               "ipmProcedure": "Lorem Ipsum sit dolar...",
+               "serviceProvider": "MedTech",
+               "serviceEngineeringCode": "504",
+               "status": 1
           },
-          "Cardiology Ward": {
-               "EKG Machines": {
-                    "workOrderNum": "64",
-                    "inventoryNum": "1234",
-                    "faultCode": "300",
-                    "ipmProcedure": "Lorem Ipsum sit dolar...",
-                    "serviceProvider": "MedTech",
-                    "serviceEngineeringCode": "504",
-                    "status": 2
-               },
-               "Defibrillators": {
-                    "workOrderNum": "64",
-                    "inventoryNum": "1234",
-                    "faultCode": "300",
-                    "ipmProcedure": "Lorem Ipsum sit dolar...",
-                    "serviceProvider": "MedTech",
-                    "serviceEngineeringCode": "504",
-                    "status": 2
-               }
+          "Surgical Masks": {
+               "workOrderNum": "64",
+               "inventoryNum": "1234",
+               "faultCode": "300",
+               "ipmProcedure": "Lorem Ipsum sit dolar...",
+               "serviceProvider": "MedTech",
+               "serviceEngineeringCode": "504",
+               "status": 0
           },
-          "Neonatal Ward": {
-               "Pulse Oximeters": {
-                    "workOrderNum": "64",
-                    "inventoryNum": "1234",
-                    "faultCode": "300",
-                    "ipmProcedure": "Lorem Ipsum sit dolar...",
-                    "serviceProvider": "MedTech Test",
-                    "serviceEngineeringCode": "504",
-                    "status": 0
-               },
-               "Incubators": {
-                    "workOrderNum": "64",
-                    "faultCode": "300",
-                    "inventoryNum": "1234",
-                    "ipmProcedure": "Lorem Ipsum sit dolar...",
-                    "serviceProvider": "MedTech4",
-                    "serviceEngineeringCode": "504",
-                    "status": "1",
-                    "timestamp": 1635297865
-               }
+          "Blood Pressure Cuffs": {
+               "workOrderNum": "64",
+               "inventoryNum": "1234",
+               "faultCode": "300",
+               "ipmProcedure": "Lorem Ipsum sit dolar...",
+               "serviceProvider": "MedTech",
+               "serviceEngineeringCode": "504",
+               "status": 1
           }
      },
-     "Key": "SAHTesting449496"
+     "Cardiology Ward": {
+          "EKG Machines": {
+               "workOrderNum": "64",
+               "inventoryNum": "1234",
+               "faultCode": "300",
+               "ipmProcedure": "Lorem Ipsum sit dolar...",
+               "serviceProvider": "MedTech",
+               "serviceEngineeringCode": "504",
+               "status": 2
+          },
+          "Defibrillators": {
+               "workOrderNum": "64",
+               "inventoryNum": "1234",
+               "faultCode": "300",
+               "ipmProcedure": "Lorem Ipsum sit dolar...",
+               "serviceProvider": "MedTech",
+               "serviceEngineeringCode": "504",
+               "status": 2
+          }
+     },
+     "Neonatal Ward": {
+          "Pulse Oximeters": {
+               "workOrderNum": "64",
+               "inventoryNum": "1234",
+               "faultCode": "300",
+               "ipmProcedure": "Lorem Ipsum sit dolar...",
+               "serviceProvider": "MedTech Test",
+               "serviceEngineeringCode": "504",
+               "status": 0
+          },
+          "Incubators": {
+               "workOrderNum": "64",
+               "faultCode": "300",
+               "inventoryNum": "1234",
+               "ipmProcedure": "Lorem Ipsum sit dolar...",
+               "serviceProvider": "MedTech4",
+               "serviceEngineeringCode": "504",
+               "status": "1",
+               "timestamp": 1635297865
+          }
+     }
 }
