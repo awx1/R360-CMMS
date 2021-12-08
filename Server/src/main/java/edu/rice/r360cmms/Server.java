@@ -254,7 +254,7 @@ public class Server {
         Spark.post( //Adds a new JSON object to a specific category
                 "/ID/:tag/",
                 (request, response) -> {
-                    System.out.println("Post:"+request.body());
+                    System.out.println("Post ID:"+request.body());
                     JSONTokener tokenizer = new JSONTokener(request.body());
                     JSONObject newObject = new JSONObject(tokenizer);
                     Update2.set(true);

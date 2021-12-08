@@ -18,6 +18,16 @@
                "serviceEngineeringCode": "504",
                "status": 0
           },
+          "EKG Machine": {
+               "workOrderNum": "testwork",
+               "faultCode": "34",
+               "inventoryNum": "138",
+               "ipmProcedure": "File work order with provider",
+               "serviceProvider": "Malawi Inc",
+               "serviceEngineeringCode": "1233",
+               "status": "0",
+               "timestamp": 1637023682
+          },
           "Blood Pressure Cuffs": {
                "workOrderNum": "64",
                "inventoryNum": "1234",
