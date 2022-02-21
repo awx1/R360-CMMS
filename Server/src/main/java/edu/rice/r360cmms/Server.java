@@ -8,6 +8,7 @@ import spark.Request;
 import spark.Spark;
 
 import javax.imageio.ImageIO;
+import javax.xml.transform.Templates;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -25,6 +26,7 @@ import static spark.Spark.staticFileLocation;
 
 public class Server {
     private static JSONObject database = new JSONObject();
+    private static JSONObject templates = new JSONObject();
     private static JSONObject idArray = new JSONObject();
     private static ReentrantLock countLock = new ReentrantLock();
     private static int count = 0;
@@ -32,9 +34,11 @@ public class Server {
     public static void main(String[] args) {
         String DB_File = "DB.json";
         String ID_File = "ID.json";
+        String Templates_File = "Templates.json";
         String values_File = "values.val";
         File initialFile_DB = new File(DB_File);
         File initialFile_ID = new File(ID_File);
+        File initialFile_Templates = new File(Templates_File);
         File valuesFile = new File(values_File);
 
         try {
@@ -42,6 +46,7 @@ public class Server {
             ObjectInputStream oi = new ObjectInputStream(fi);
             count =(int) oi.readObject();
             //keys =(ArrayList<String>) oi.readObject();
+            keys.add("SAHTesting449496");
             oi.close();
             fi.close();
         } catch (FileNotFoundException e) {
@@ -52,12 +57,17 @@ public class Server {
         }
         InputStream is = null;
         InputStream is2 = null;
+        InputStream is3 = null;
         try {
             is = new FileInputStream(initialFile_DB);
         } catch (FileNotFoundException ignored) {
         }
         try {
             is2 = new FileInputStream(initialFile_ID);
+        } catch (FileNotFoundException ignored) {
+        }
+        try {
+            is3 = new FileInputStream(initialFile_Templates);
         } catch (FileNotFoundException ignored) {
         }
 
@@ -75,12 +85,20 @@ public class Server {
         else {
             idArray = new JSONObject();
         }
+        if (is3 != null) {
+            JSONTokener tokenizer = new JSONTokener(is3);
+            templates = new JSONObject(tokenizer);
+        }
+        else {
+            templates = new JSONObject();
+        }
         AtomicReference<ShutdownHandler> shutdownListener = new AtomicReference<>(new ShutdownHandler(database, DB_File));
         AtomicReference<Boolean> Update = new AtomicReference<>(true);
         AtomicReference<Boolean> Update2 = new AtomicReference<>(true);
         AtomicReference<Boolean> Update3 = new AtomicReference<>(true);
+        AtomicReference<Boolean> UpdateTemplates = new AtomicReference<>(true);
         //shutdownListener.run();
-        System.out.println(keys);
+        System.out.println("keys:"+keys.toString());
         Runtime.getRuntime().addShutdownHook(shutdownListener.get());
 
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
@@ -97,6 +115,13 @@ public class Server {
                 ShutdownHandler saver = new ShutdownHandler(idArray, ID_File);
                 saver.start();
                 Update2.set(false);
+            }
+        }, 0, 5, TimeUnit.SECONDS);
+        exec.scheduleAtFixedRate(() -> {
+            if (UpdateTemplates.get()) {
+                ShutdownHandler saver = new ShutdownHandler(templates, Templates_File);
+                saver.start();
+                UpdateTemplates.set(false);
             }
         }, 0, 5, TimeUnit.SECONDS);
         exec.scheduleAtFixedRate(() -> {
@@ -129,6 +154,9 @@ public class Server {
         Spark.get(//Returns JSON object
                 "/DB/",
                 (request, response) -> database.toString(5));
+        Spark.get(//Returns JSON object
+                "/Templates/",
+                (request, response) -> templates.toString(5));
         Spark.get(//Returns JSON object
                 "/DB/:category/",
                 (request, response) -> getCategory(database,request).toString(5));
@@ -255,6 +283,24 @@ public class Server {
                     LogChange("ID Replace "+request.params().get(":tag")+" With:",newObject);
                     return idArray.put(request.params().get(":tag"), newObject);
                 });
+
+
+        Spark.post( //Adds a new JSON object to a specific category
+                "/Templates/",
+                (request, response) -> {
+                    System.out.println("Post:"+request.body());
+                    JSONTokener tokenizer = new JSONTokener(request.body());
+                    JSONObject newObject = new JSONObject(tokenizer);
+                    templates = newObject;
+                    JSONObject data = (JSONObject) newObject.get("Data");
+                    if (checkAuthKey(newObject.get("Key").toString())) {
+                        UpdateTemplates.set(true);
+                        LogChange("Replace Tempaltes With:",data);
+                        return templates;
+                    }
+                    return "Bad auth Key";
+                });
+
         Spark.get(//Returns JSON object
                 "/ID/",
                 (request, response) -> idArray.toString(5));

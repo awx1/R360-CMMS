@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <!-- when using the mode "code", it's important to specify charset utf-8 -->
+    <meta charset="utf-8">
+
+    <link href="jsoneditor/dist/jsoneditor.min.css" rel="stylesheet" type="text/css">
+    <script src="jsoneditor/dist/jsoneditor.min.js"></script>
+</head>
+<body>
+<div id="jsoneditor" ></div>
+<form>
+    <label for="URL">URL</label><br>
+    <input type="text" id="URL" name="URL"><br>
+    <label for="AuthKey">AuthKey</label><br>
+    <input type="text" id="AuthKey" name="AuthKey">
+</form>
+<input id="clickMe" type="button" value="Update Database" onclick="doFunction();" />
+<input id="MakeAuth" type="button" value="Make Auth QR Code" onclick="doFunction2();" />
+<br>
+<img class="QRCode" src="/QR/Blank/" width="500" height="540">
+<script>
+        // create the editor
+        const container = document.getElementById("jsoneditor")
+        const options = {}
+        const editor = new JSONEditor(container, options)
+
+        // set json
+        const initialJson = {
+            "Array": [1, 2, 3],
+            "Boolean": true,
+            "Null": null,
+            "Number": 123,
+            "Object": {"a": "b", "c": "d"},
+            "String": "Hello World"
+        }
+        editor.set(JSON.parse(httpGet("../Templates/")))
+        function httpGet(theUrl)
+        {
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
+            xmlHttp.send( null );
+            return xmlHttp.responseText;
+        }
+        function httpPost(theUrl, data)
+        {
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open( "POST", theUrl, false ); // false for synchronous request
+            xmlHttp.send( data );
+            return xmlHttp.responseText;
+        }
+
+        // get json
+        const updatedJson = editor.get()
+        function doFunction() {
+            const updatedJson = editor.get();
+            const JSONstringData = JSON.stringify(updatedJson)
+            const JSONstringHeader = "{\"Key\":\"SAHTesting449496\",\"Data\":"
+            const JSONstringEnd = "}"
+            const JSONstringFinished = JSONstringHeader.concat(JSONstringData, JSONstringEnd)
+            console.log(JSONstringFinished)
+            httpPost("../Templates/", JSONstringFinished);
+        }
+
+        function doFunction2() {
+			const formData = new FormData(document.querySelector('form'));
+			var AuthKey2 = "default1";
+			var URL = "default2";
+			for (var pair of formData.entries()) {
+				console.log(pair[0] + ': ' + pair[1]);
+				if (pair[0] == "AuthKey") {
+					AuthKey2 = pair[1];
+					console.log(AuthKey2);
+					console.log(pair[1]);
+					console.log("Testing1");
+				}
+				if (pair[0] == "URL") {
+					URL = pair[1];
+					console.log("Testing2");
+				}
+			}
+            const JSONstringHeader = "\\QR\\{\"AuthKey\":\""
+            const JSONstringFinished = JSONstringHeader.concat(AuthKey2, "\",\"URL\":\"",URL,"\"}\\")
+            console.log(JSONstringFinished)
+            console.log(AuthKey2)
+            console.log(URL)
+            document.getElementsByClassName("QRCode")[0].src = JSONstringFinished;
+        }
+    </script>
+</body>
+</html>
